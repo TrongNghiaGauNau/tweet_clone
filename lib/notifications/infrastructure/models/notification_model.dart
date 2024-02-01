@@ -10,7 +10,11 @@ class NotificationModel with _$NotificationModel {
     required String text,
     required String postId,
     required String id,
-    required String uid,
+    required String receiverID,
+    required String senderID,
+    // required String senderAvatar,
+    // required String senderName,
+    required String createdAt,
     required NotificationType notificationType,
   }) = _NotificationModel;
 
@@ -21,8 +25,7 @@ class NotificationModel with _$NotificationModel {
 enum NotificationType {
   like('like'),
   reply('reply'),
-  follow('follow'),
-  retweet('retweet');
+  follow('follow');
 
   final String type;
   const NotificationType(this.type);
@@ -37,8 +40,6 @@ extension ConvertTweet on String {
         return NotificationType.reply;
       case 'follow':
         return NotificationType.follow;
-      case 'retweet':
-        return NotificationType.retweet;
       default:
         return NotificationType.like;
     }

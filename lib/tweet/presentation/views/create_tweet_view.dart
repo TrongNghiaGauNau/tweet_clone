@@ -37,10 +37,7 @@ class CreateTweetScreen extends HookConsumerWidget with LoadingMixin {
         return;
       }
       final asyncTask = ref.read(tweetControllerProvider.notifier).shareTweet(
-          images: images.value,
-          text: tweetTextController.text,
-          context: context,
-          repliedTo: '');
+          images: images.value, text: tweetTextController.text, repliedTo: '');
 
       final res = await doAsyncTask(context, asyncTask: asyncTask);
       if (res == null) {
@@ -87,14 +84,13 @@ class CreateTweetScreen extends HookConsumerWidget with LoadingMixin {
                     Row(
                       children: [
                         CircleAvatar(
-                          backgroundImage:
-                              NetworkImage(user?.profilePic ?? defaultAvatar),
+                          backgroundImage: NetworkImage(
+                              (user?.profilePic == null ||
+                                      user?.profilePic == '')
+                                  ? defaultAvatar
+                                  : user!.profilePic),
                           radius: 30,
                         ),
-                        // const Icon(
-                        //   Icons.person,
-                        //   size: 30,
-                        // ),
                         const SizedBox(
                           width: 15,
                         ),

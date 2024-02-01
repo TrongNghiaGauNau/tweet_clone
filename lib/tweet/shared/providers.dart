@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
+import 'package:twitter_clone_2/notifications/shared/providers.dart';
 import 'package:twitter_clone_2/tweet/application/single_tweet_notifier.dart';
 import 'package:twitter_clone_2/tweet/application/tweet_comment_notifier.dart';
 import 'package:twitter_clone_2/tweet/application/tweet_controller.dart';
@@ -27,12 +28,13 @@ final getTweettDetailProvider =
 final singleTweetControllerProvider = StateNotifierProvider.autoDispose
     .family<SingleTweetNotifier, Tweet?, String>((ref, tweetId) {
   return SingleTweetNotifier(
-    ref.watch(getTweettDetailProvider(tweetId)).valueOrNull,
-    ref.watch(tweetRepositoryProvider),
-  );
+      ref.watch(getTweettDetailProvider(tweetId)).valueOrNull,
+      ref.watch(tweetRepositoryProvider),
+      ref.watch(notificationNotifierProvider.notifier));
 });
 
 final commentTweetProvider =
     StateNotifierProvider<TweetCommentNotifier, CommentState>((ref) {
-  return TweetCommentNotifier(ref.watch(tweetRepositoryProvider));
+  return TweetCommentNotifier(ref.watch(tweetRepositoryProvider),
+      ref.watch(notificationNotifierProvider.notifier));
 });

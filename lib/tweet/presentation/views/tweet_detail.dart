@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
+import 'package:twitter_clone_2/auth/shared/providers.dart';
 import 'package:twitter_clone_2/core/presentation/common/loading_page.dart';
 import 'package:twitter_clone_2/core/presentation/mixin.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
@@ -19,6 +20,7 @@ class TwitterDetailScreen extends HookConsumerWidget with DismissKeyboard {
   Widget build(BuildContext context, WidgetRef ref) {
     final tweet = ref.watch(singleTweetControllerProvider(tweetId));
     final currentUser = ref.watch(firebaseAuthProvider).currentUser;
+    // final currentUserDetail = ref.watch(currentUserDetailsProvider).value;
     final comments = ref.watch(commentTweetProvider);
     final txtCtrl = useTextEditingController();
     final isEmpty =
@@ -56,20 +58,13 @@ class TwitterDetailScreen extends HookConsumerWidget with DismissKeyboard {
                               children: [
                                 DetailTweetCard(
                                     tweet: tweet, currentUser: currentUser),
-                                if (comments.isLoading)
-                                  const Center(
-                                      child: CircularProgressIndicator()),
                                 if (comments.tweetComments.isNotEmpty)
                                   ListView.builder(
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
-                                    // itemCount: comments.tweetComments.length,
                                     itemCount: comments.tweetComments.length,
                                     itemBuilder: (context, index) {
-                                      //mỗi lần vào màn hình detail bot thì fetch all comments (getTweetComments)
-                                      //comment thì update lại state cho single tweet (updatePost)
-                                      //add comment mới lên trên cùng (addNewComment)
                                       return TweetCommentTile(
                                         comment: comments.tweetComments[index],
                                       );

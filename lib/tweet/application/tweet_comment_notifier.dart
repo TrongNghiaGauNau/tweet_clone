@@ -5,6 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:twitter_clone_2/core/application/utils.dart';
 import 'package:twitter_clone_2/core/domain/type_defs.dart';
+import 'package:twitter_clone_2/notifications/application/notification_notifier.dart';
+import 'package:twitter_clone_2/notifications/infrastructure/models/notification_model.dart';
+import 'package:twitter_clone_2/tweet/application/tweet_const.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/comment/comment.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/comment/comment_state.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
@@ -12,8 +15,10 @@ import 'package:twitter_clone_2/tweet/infrastructure/tweet_repository.dart';
 import 'package:uuid/uuid.dart';
 
 class TweetCommentNotifier extends StateNotifier<CommentState> {
-  TweetCommentNotifier(this._repo) : super(const CommentState());
+  TweetCommentNotifier(this._repo, this._notificationNotifier)
+      : super(const CommentState());
   final TweetRepository _repo;
+  final NotificationNotifier _notificationNotifier;
 
   // FutureVoid likeComment(Comment comment, String uid) async {
   //   List<String> likes = [...comment.likes ?? []];
@@ -68,6 +73,13 @@ class TweetCommentNotifier extends StateNotifier<CommentState> {
     return fOs.fold(
       (l) => left(l),
       (r) {
+        _notificationNotifier.createNotification(
+          text: ' comment on your tweet',
+          postId: tweet.id,
+          notificationType: NotificationType.reply,
+          receiverID: tweet.tweetCreator[TweetCreator.creatorUID]!,
+          senderID: uid,
+        );
         getTweetComments(commentsIds);
         return right(tweet);
       },

@@ -96,15 +96,15 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
                               ),
                             ),
                           ),
-                    // if (isChangeBanner.value)
-                    //   Positioned.fill(
-                    //       child: Container(
-                    //     decoration: BoxDecoration(
-                    //         color: Colors.black12.withOpacity(0.5)),
-                    //     child: const Center(
-                    //       child: CircularProgressIndicator(),
-                    //     ),
-                    //   )),
+                    if (isChangeBanner.value)
+                      Positioned.fill(
+                          child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black12.withOpacity(0.5)),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )),
                     Positioned(
                         left: 20,
                         bottom: -50,
@@ -123,49 +123,49 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
                             radius: 45,
                           ),
                         )),
-                    // if (currentUID == user!.uid &&
-                    //     changedBannerPic.value == null)
-                    //   Positioned(
-                    //       right: 10,
-                    //       bottom: 10,
-                    //       child: GestureDetector(
-                    //         onTap: () {},
-                    //         child: Container(
-                    //             padding: const EdgeInsets.all(5),
-                    //             decoration: BoxDecoration(
-                    //                 border: Border.all(),
-                    //                 color: Colors.black.withOpacity(0.5),
-                    //                 shape: BoxShape.circle),
-                    //             child: const Icon(Icons.image)),
-                    //       )),
-                    // if (changedBannerPic.value != null)
-                    //   Positioned(
-                    //       right: 10,
-                    //       bottom: 10,
-                    //       child: GestureDetector(
-                    //         onTap: () {},
-                    //         child: Container(
-                    //             padding: const EdgeInsets.all(5),
-                    //             decoration: BoxDecoration(
-                    //                 border: Border.all(),
-                    //                 color: Colors.black.withOpacity(0.5),
-                    //                 shape: BoxShape.circle),
-                    //             child: const Icon(Icons.check)),
-                    //       )),
-                    // if (changedBannerPic.value != null)
-                    //   Positioned(
-                    //       right: 50,
-                    //       bottom: 10,
-                    //       child: GestureDetector(
-                    //         onTap: () => changedBannerPic.value = null,
-                    //         child: Container(
-                    //             padding: const EdgeInsets.all(5),
-                    //             decoration: BoxDecoration(
-                    //                 border: Border.all(),
-                    //                 color: Colors.black.withOpacity(0.5),
-                    //                 shape: BoxShape.circle),
-                    //             child: const Icon(Icons.cancel)),
-                    //       )),
+                    if (currentUID == user!.uid &&
+                        changedBannerPic.value == null)
+                      Positioned(
+                          right: 10,
+                          bottom: 10,
+                          child: GestureDetector(
+                            onTap: onPickImages,
+                            child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    border: Border.all(),
+                                    color: Colors.black.withOpacity(0.5),
+                                    shape: BoxShape.circle),
+                                child: const Icon(Icons.image)),
+                          )),
+                    if (changedBannerPic.value != null)
+                      Positioned(
+                          right: 10,
+                          bottom: 10,
+                          child: GestureDetector(
+                            onTap: changeBannerPic,
+                            child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    border: Border.all(),
+                                    color: Colors.black.withOpacity(0.5),
+                                    shape: BoxShape.circle),
+                                child: const Icon(Icons.check)),
+                          )),
+                    if (changedBannerPic.value != null)
+                      Positioned(
+                          right: 50,
+                          bottom: 10,
+                          child: GestureDetector(
+                            onTap: () => changedBannerPic.value = null,
+                            child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    border: Border.all(),
+                                    color: Colors.black.withOpacity(0.5),
+                                    shape: BoxShape.circle),
+                                child: const Icon(Icons.cancel)),
+                          )),
                   ],
                 ),
                 const SizedBox(height: 50),

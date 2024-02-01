@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone_2/auth/shared/providers.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
+import 'package:twitter_clone_2/test.dart';
 import 'package:twitter_clone_2/user_profile/presentation/views/profile_screen.dart';
 
 class SettingView extends ConsumerWidget {
@@ -38,8 +39,8 @@ class SettingView extends ConsumerWidget {
             settingTile(
               icon: const Icon(Icons.error),
               text: 'Maintainace',
-              onTap: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => Container())),
+              onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const TestScreen())),
             ),
           ],
         ),

@@ -7,6 +7,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:twitter_clone_2/core/domain/failure.dart';
 import 'package:twitter_clone_2/core/domain/type_defs.dart';
+import 'package:twitter_clone_2/tweet/application/tweet_const.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/comment/comment.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
 import 'package:uuid/uuid.dart';
@@ -97,7 +98,7 @@ class TweetRepository {
 
   Future<List<Tweet>> getTweets(List<String> followedUser) async {
     final documents = await _tweetRepo
-        .where('uid', whereIn: followedUser)
+        .where('tweetCreator.creator_uid', whereIn: followedUser)
         .orderBy('tweetedAt', descending: true)
         .get();
     final tweetsList =
@@ -171,7 +172,7 @@ class TweetRepository {
 
   Future<List<Tweet>> getUsersTweets(String uid) async {
     final documents = await _tweetRepo
-        .where('uid', isEqualTo: uid)
+        .where('tweetCreator.${TweetCreator.creatorUID}', isEqualTo: uid)
         .orderBy('tweetedAt', descending: true)
         .get();
     final tweetsList =

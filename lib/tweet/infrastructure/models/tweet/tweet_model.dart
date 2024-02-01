@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:twitter_clone_2/tweet/infrastructure/models/tweet_creator/tweet_creator.dart';
 
 part 'tweet_model.freezed.dart';
 
@@ -20,7 +19,7 @@ class Tweet with _$Tweet {
     required int reshareCount,
     required String retweetedBy,
     required String repliedTo,
-    required TweetCreator tweetCreator,
+    required Map<String, String> tweetCreator,
   }) = _Tweet;
 
   factory Tweet.fromJson(Map<String, dynamic> json) => _$TweetFromJson(json);

@@ -32,7 +32,7 @@ mixin _$Tweet {
   int get reshareCount => throw _privateConstructorUsedError;
   String get retweetedBy => throw _privateConstructorUsedError;
   String get repliedTo => throw _privateConstructorUsedError;
-  TweetCreator get tweetCreator => throw _privateConstructorUsedError;
+  Map<String, String> get tweetCreator => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -57,9 +57,7 @@ abstract class $TweetCopyWith<$Res> {
       int reshareCount,
       String retweetedBy,
       String repliedTo,
-      TweetCreator tweetCreator});
-
-  $TweetCreatorCopyWith<$Res> get tweetCreator;
+      Map<String, String> tweetCreator});
 }
 
 /// @nodoc
@@ -141,16 +139,8 @@ class _$TweetCopyWithImpl<$Res, $Val extends Tweet>
       tweetCreator: null == tweetCreator
           ? _value.tweetCreator
           : tweetCreator // ignore: cast_nullable_to_non_nullable
-              as TweetCreator,
+              as Map<String, String>,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $TweetCreatorCopyWith<$Res> get tweetCreator {
-    return $TweetCreatorCopyWith<$Res>(_value.tweetCreator, (value) {
-      return _then(_value.copyWith(tweetCreator: value) as $Val);
-    });
   }
 }
 
@@ -174,10 +164,7 @@ abstract class _$$TweetImplCopyWith<$Res> implements $TweetCopyWith<$Res> {
       int reshareCount,
       String retweetedBy,
       String repliedTo,
-      TweetCreator tweetCreator});
-
-  @override
-  $TweetCreatorCopyWith<$Res> get tweetCreator;
+      Map<String, String> tweetCreator});
 }
 
 /// @nodoc
@@ -255,9 +242,9 @@ class __$$TweetImplCopyWithImpl<$Res>
           : repliedTo // ignore: cast_nullable_to_non_nullable
               as String,
       tweetCreator: null == tweetCreator
-          ? _value.tweetCreator
+          ? _value._tweetCreator
           : tweetCreator // ignore: cast_nullable_to_non_nullable
-              as TweetCreator,
+              as Map<String, String>,
     ));
   }
 }
@@ -278,11 +265,12 @@ class _$TweetImpl implements _Tweet {
       required this.reshareCount,
       required this.retweetedBy,
       required this.repliedTo,
-      required this.tweetCreator})
+      required final Map<String, String> tweetCreator})
       : _hashTags = hashTags,
         _imagesLink = imagesLink,
         _likes = likes,
-        _commentsIds = commentsIds;
+        _commentsIds = commentsIds,
+        _tweetCreator = tweetCreator;
 
   factory _$TweetImpl.fromJson(Map<String, dynamic> json) =>
       _$$TweetImplFromJson(json);
@@ -335,8 +323,13 @@ class _$TweetImpl implements _Tweet {
   final String retweetedBy;
   @override
   final String repliedTo;
+  final Map<String, String> _tweetCreator;
   @override
-  final TweetCreator tweetCreator;
+  Map<String, String> get tweetCreator {
+    if (_tweetCreator is EqualUnmodifiableMapView) return _tweetCreator;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_tweetCreator);
+  }
 
   @override
   String toString() {
@@ -367,8 +360,8 @@ class _$TweetImpl implements _Tweet {
                 other.retweetedBy == retweetedBy) &&
             (identical(other.repliedTo, repliedTo) ||
                 other.repliedTo == repliedTo) &&
-            (identical(other.tweetCreator, tweetCreator) ||
-                other.tweetCreator == tweetCreator));
+            const DeepCollectionEquality()
+                .equals(other._tweetCreator, _tweetCreator));
   }
 
   @JsonKey(ignore: true)
@@ -387,7 +380,7 @@ class _$TweetImpl implements _Tweet {
       reshareCount,
       retweetedBy,
       repliedTo,
-      tweetCreator);
+      const DeepCollectionEquality().hash(_tweetCreator));
 
   @JsonKey(ignore: true)
   @override
@@ -417,7 +410,7 @@ abstract class _Tweet implements Tweet {
       required final int reshareCount,
       required final String retweetedBy,
       required final String repliedTo,
-      required final TweetCreator tweetCreator}) = _$TweetImpl;
+      required final Map<String, String> tweetCreator}) = _$TweetImpl;
 
   factory _Tweet.fromJson(Map<String, dynamic> json) = _$TweetImpl.fromJson;
 
@@ -446,7 +439,7 @@ abstract class _Tweet implements Tweet {
   @override
   String get repliedTo;
   @override
-  TweetCreator get tweetCreator;
+  Map<String, String> get tweetCreator;
   @override
   @JsonKey(ignore: true)
   _$$TweetImplCopyWith<_$TweetImpl> get copyWith =>

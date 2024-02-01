@@ -2,8 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:twitter_clone_2/core/application/const.dart';
-import 'package:twitter_clone_2/tweet/infrastructure/models/tweet_creator/tweet_creator.dart';
+import 'package:twitter_clone_2/tweet/application/tweet_const.dart';
 import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart'
     as model;
 import 'package:twitter_clone_2/auth/shared/providers.dart';
@@ -28,47 +27,39 @@ class TweetController extends StateNotifier<TweetListState> {
   Future<Either<Failure, Tweet>?> shareTweet({
     required List<File> images,
     required String text,
-    required BuildContext context,
     required String repliedTo,
   }) async {
     final userId = ref.read(firebaseAuthProvider).currentUser?.uid ?? '';
-    debugPrint('currentUserId: $userId');
-    final currentUser = ref.read(userDetail(userId));
-    currentUser.maybeWhen(
-        data: (user) async {
-          if (user == null) return null;
-          final tweetCreator =
-              TweetCreator(profilePic: user.profilePic, uid: user.uid);
-          if (images.isNotEmpty) {
-            final res = await _shareImageTweet(
-                images: images,
-                text: text,
-                context: context,
-                repliedTo: repliedTo,
-                tweetCreator: tweetCreator);
-            return res;
-          } else {
-            final res = await _shareTextTweet(
-                text: text,
-                context: context,
-                repliedTo: repliedTo,
-                tweetCreator: tweetCreator);
-            return res;
-          }
-        },
-        error: (error, stackTrace) {
-          return null;
-        },
-        orElse: () {});
-    return null;
+    final currentUser = await ref
+        .read(userControllerProvider.notifier)
+        .getUserDetailInfo(userId);
+    if (currentUser == null) {
+      return null;
+    }
+    final Map<String, String> tweetCreator = {
+      TweetCreator.creatorAvatar: currentUser.profilePic,
+      TweetCreator.creatorUID: currentUser.uid,
+      TweetCreator.creatorName: currentUser.name,
+    };
+    if (images.isNotEmpty) {
+      final res = await _shareImageTweet(
+          images: images,
+          text: text,
+          repliedTo: repliedTo,
+          tweetCreator: tweetCreator);
+      return res;
+    } else {
+      final res = await _shareTextTweet(
+          text: text, repliedTo: repliedTo, tweetCreator: tweetCreator);
+      return res;
+    }
   }
 
   Future<Either<Failure, Tweet>> _shareImageTweet(
       {required List<File> images,
       required String text,
-      required BuildContext context,
       required String repliedTo,
-      required TweetCreator tweetCreator}) async {
+      required Map<String, String> tweetCreator}) async {
     state = state.copyWith(isLoading: true);
     final hashTags = getHashtagsFromText(text);
     final link = getLinkFromText(text);
@@ -96,9 +87,8 @@ class TweetController extends StateNotifier<TweetListState> {
 
   Future<Either<Failure, Tweet>> _shareTextTweet(
       {required String text,
-      required BuildContext context,
       required String repliedTo,
-      required TweetCreator tweetCreator}) async {
+      required Map<String, String> tweetCreator}) async {
     state = state.copyWith(isLoading: true);
     final hashTags = getHashtagsFromText(text);
     final link = getLinkFromText(text);
@@ -123,13 +113,13 @@ class TweetController extends StateNotifier<TweetListState> {
   }
 
   Future<List<Tweet>> reshareTweet(
-      Tweet tweet, model.User currentUser, BuildContext context) async {
+      Tweet tweet, String currentUserName, BuildContext context) async {
     tweet = tweet.copyWith(reshareCount: tweet.reshareCount + 1);
     final newId = const Uuid().v4();
     final newTweet = tweet.copyWith(
         id: newId,
         reshareCount: 0,
-        retweetedBy: currentUser.name,
+        retweetedBy: currentUserName,
         tweetedAt: DateTime.now().toIso8601String());
 
     //update original tweet reshare count

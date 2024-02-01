@@ -23,7 +23,11 @@ mixin _$NotificationModel {
   String get text => throw _privateConstructorUsedError;
   String get postId => throw _privateConstructorUsedError;
   String get id => throw _privateConstructorUsedError;
-  String get uid => throw _privateConstructorUsedError;
+  String get receiverID => throw _privateConstructorUsedError;
+  String get senderID =>
+      throw _privateConstructorUsedError; // required String senderAvatar,
+// required String senderName,
+  String get createdAt => throw _privateConstructorUsedError;
   NotificationType get notificationType => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,7 +46,9 @@ abstract class $NotificationModelCopyWith<$Res> {
       {String text,
       String postId,
       String id,
-      String uid,
+      String receiverID,
+      String senderID,
+      String createdAt,
       NotificationType notificationType});
 }
 
@@ -62,7 +68,9 @@ class _$NotificationModelCopyWithImpl<$Res, $Val extends NotificationModel>
     Object? text = null,
     Object? postId = null,
     Object? id = null,
-    Object? uid = null,
+    Object? receiverID = null,
+    Object? senderID = null,
+    Object? createdAt = null,
     Object? notificationType = null,
   }) {
     return _then(_value.copyWith(
@@ -78,9 +86,17 @@ class _$NotificationModelCopyWithImpl<$Res, $Val extends NotificationModel>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      uid: null == uid
-          ? _value.uid
-          : uid // ignore: cast_nullable_to_non_nullable
+      receiverID: null == receiverID
+          ? _value.receiverID
+          : receiverID // ignore: cast_nullable_to_non_nullable
+              as String,
+      senderID: null == senderID
+          ? _value.senderID
+          : senderID // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
               as String,
       notificationType: null == notificationType
           ? _value.notificationType
@@ -102,7 +118,9 @@ abstract class _$$NotificationModelImplCopyWith<$Res>
       {String text,
       String postId,
       String id,
-      String uid,
+      String receiverID,
+      String senderID,
+      String createdAt,
       NotificationType notificationType});
 }
 
@@ -120,7 +138,9 @@ class __$$NotificationModelImplCopyWithImpl<$Res>
     Object? text = null,
     Object? postId = null,
     Object? id = null,
-    Object? uid = null,
+    Object? receiverID = null,
+    Object? senderID = null,
+    Object? createdAt = null,
     Object? notificationType = null,
   }) {
     return _then(_$NotificationModelImpl(
@@ -136,9 +156,17 @@ class __$$NotificationModelImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      uid: null == uid
-          ? _value.uid
-          : uid // ignore: cast_nullable_to_non_nullable
+      receiverID: null == receiverID
+          ? _value.receiverID
+          : receiverID // ignore: cast_nullable_to_non_nullable
+              as String,
+      senderID: null == senderID
+          ? _value.senderID
+          : senderID // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
               as String,
       notificationType: null == notificationType
           ? _value.notificationType
@@ -155,7 +183,9 @@ class _$NotificationModelImpl implements _NotificationModel {
       {required this.text,
       required this.postId,
       required this.id,
-      required this.uid,
+      required this.receiverID,
+      required this.senderID,
+      required this.createdAt,
       required this.notificationType});
 
   factory _$NotificationModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -168,13 +198,19 @@ class _$NotificationModelImpl implements _NotificationModel {
   @override
   final String id;
   @override
-  final String uid;
+  final String receiverID;
+  @override
+  final String senderID;
+// required String senderAvatar,
+// required String senderName,
+  @override
+  final String createdAt;
   @override
   final NotificationType notificationType;
 
   @override
   String toString() {
-    return 'NotificationModel(text: $text, postId: $postId, id: $id, uid: $uid, notificationType: $notificationType)';
+    return 'NotificationModel(text: $text, postId: $postId, id: $id, receiverID: $receiverID, senderID: $senderID, createdAt: $createdAt, notificationType: $notificationType)';
   }
 
   @override
@@ -185,15 +221,20 @@ class _$NotificationModelImpl implements _NotificationModel {
             (identical(other.text, text) || other.text == text) &&
             (identical(other.postId, postId) || other.postId == postId) &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.receiverID, receiverID) ||
+                other.receiverID == receiverID) &&
+            (identical(other.senderID, senderID) ||
+                other.senderID == senderID) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
             (identical(other.notificationType, notificationType) ||
                 other.notificationType == notificationType));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, text, postId, id, uid, notificationType);
+  int get hashCode => Object.hash(runtimeType, text, postId, id, receiverID,
+      senderID, createdAt, notificationType);
 
   @JsonKey(ignore: true)
   @override
@@ -215,7 +256,9 @@ abstract class _NotificationModel implements NotificationModel {
           {required final String text,
           required final String postId,
           required final String id,
-          required final String uid,
+          required final String receiverID,
+          required final String senderID,
+          required final String createdAt,
           required final NotificationType notificationType}) =
       _$NotificationModelImpl;
 
@@ -229,7 +272,12 @@ abstract class _NotificationModel implements NotificationModel {
   @override
   String get id;
   @override
-  String get uid;
+  String get receiverID;
+  @override
+  String get senderID;
+  @override // required String senderAvatar,
+// required String senderName,
+  String get createdAt;
   @override
   NotificationType get notificationType;
   @override

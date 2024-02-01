@@ -14,3 +14,10 @@ final userDetailsProvider = FutureProvider.family((ref, String uid) {
   final authController = ref.watch(authControllerProvider.notifier);
   return authController.getUserData(uid);
 });
+
+final currentUserDetailsProvider = FutureProvider((ref) {
+  final currentUser = ref.watch(firebaseAuthProvider).currentUser?.uid;
+  final authController = ref.watch(authControllerProvider.notifier);
+  if (currentUser == null) return null;
+  return authController.getUserData(currentUser);
+});

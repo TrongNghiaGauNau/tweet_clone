@@ -12,7 +12,9 @@ _$NotificationModelImpl _$$NotificationModelImplFromJson(
       text: json['text'] as String,
       postId: json['postId'] as String,
       id: json['id'] as String,
-      uid: json['uid'] as String,
+      receiverID: json['receiverID'] as String,
+      senderID: json['senderID'] as String,
+      createdAt: json['createdAt'] as String,
       notificationType:
           $enumDecode(_$NotificationTypeEnumMap, json['notificationType']),
     );
@@ -23,7 +25,9 @@ Map<String, dynamic> _$$NotificationModelImplToJson(
       'text': instance.text,
       'postId': instance.postId,
       'id': instance.id,
-      'uid': instance.uid,
+      'receiverID': instance.receiverID,
+      'senderID': instance.senderID,
+      'createdAt': instance.createdAt,
       'notificationType': _$NotificationTypeEnumMap[instance.notificationType]!,
     };
 
@@ -31,5 +35,4 @@ const _$NotificationTypeEnumMap = {
   NotificationType.like: 'like',
   NotificationType.reply: 'reply',
   NotificationType.follow: 'follow',
-  NotificationType.retweet: 'retweet',
 };

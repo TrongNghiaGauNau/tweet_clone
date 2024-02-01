@@ -10,6 +10,7 @@ import 'package:twitter_clone_2/core/application/const.dart';
 import 'package:twitter_clone_2/core/application/utils.dart';
 import 'package:twitter_clone_2/core/presentation/constants/assets_constants.dart';
 import 'package:twitter_clone_2/theme/pallete.dart';
+import 'package:twitter_clone_2/tweet/application/tweet_const.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
 import 'package:twitter_clone_2/tweet/presentation/widgets/carousel_image.dart';
 import 'package:twitter_clone_2/tweet/presentation/widgets/hashtag_text.dart';
@@ -26,11 +27,14 @@ class DetailTweetCard extends HookConsumerWidget {
   });
 
   final Tweet tweet;
-  final User? currentUser;
+  final User currentUser;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userDetailsProvider(tweet.tweetCreator.uid)).value;
+    final user = ref
+        .watch(userDetailsProvider(
+            tweet.tweetCreator[TweetCreator.creatorUID] ?? ''))
+        .value;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -125,7 +129,7 @@ class DetailTweetCard extends HookConsumerWidget {
                             }
                             final reshareListTweet = await ref
                                 .read(tweetControllerProvider.notifier)
-                                .reshareTweet(tweet, user!, context);
+                                .reshareTweet(tweet, user.name, context);
                             //add tweet moi dc tao len tren dau list news
                             ref
                                 .read(tweetControllerProvider.notifier)
@@ -143,10 +147,10 @@ class DetailTweetCard extends HookConsumerWidget {
                             ref
                                 .read(singleTweetControllerProvider(tweet.id)
                                     .notifier)
-                                .likeTweet(tweet, currentUser!.uid);
+                                .likeTweet(tweet, currentUser.uid);
                             return !isLiked;
                           },
-                          isLiked: tweet.likes.contains(currentUser!.uid),
+                          isLiked: tweet.likes.contains(currentUser.uid),
                           likeBuilder: (isLiked) {
                             return isLiked
                                 ? SvgPicture.asset(

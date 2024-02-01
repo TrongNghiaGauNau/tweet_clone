@@ -34,8 +34,6 @@ class UserProfileController extends StateNotifier<UserProfileState> {
   }
 
   Future<model.User?> getUserDetailInfo(String uid) async {
-    // debugPrint('getUserDetailInfo');
-    // debugPrint('uid in getUser: $uid');
     state = const UserProfileState.loading();
     try {
       final user = await _userRepo.getUserData(uid);
