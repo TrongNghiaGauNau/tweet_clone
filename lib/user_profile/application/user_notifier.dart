@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone_2/auth/application/authenticator.dart';
 import 'package:twitter_clone_2/core/domain/type_defs.dart';
+import 'package:twitter_clone_2/notifications/application/notification_notifier.dart';
+import 'package:twitter_clone_2/notifications/infrastructure/models/notification_model.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/tweet_repository.dart';
 import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart'
@@ -17,16 +19,19 @@ class UserProfileController extends StateNotifier<UserProfileState> {
     required TweetRepository tweetRepo,
     required UserRepsitory userRepo,
     required Authenticator authenticator,
+    required NotificationNotifier notificationNotifier,
     // required NotificationController notificationController,
   })  : _tweetRepo = tweetRepo,
         _userRepo = userRepo,
         _authenticator = authenticator,
+        _notificationNotifier = notificationNotifier,
         // _notificationController = notificationController,
         super(const UserProfileState.init());
 
   final TweetRepository _tweetRepo;
   final UserRepsitory _userRepo;
   final Authenticator _authenticator;
+  final NotificationNotifier _notificationNotifier;
   // final NotificationController _notificationController;
 
   Future<List<Tweet>> getUsersTweets(String uid) async {
@@ -119,6 +124,13 @@ class UserProfileController extends StateNotifier<UserProfileState> {
     final res = await _userRepo.followUser(
         currentuser: currentUser, followedUser: followedUser);
     res.fold((l) => debugPrint(l.messsage), (r) {
+      _notificationNotifier.createNotification(
+        text: ' start following you',
+        postId: '',
+        notificationType: NotificationType.follow,
+        receiverID: followedUser.uid,
+        senderID: currentUser.uid,
+      );
       state = state.maybeWhen(
         orElse: () => state,
         data: (userData, tweetsData) => UserProfileState.data(
