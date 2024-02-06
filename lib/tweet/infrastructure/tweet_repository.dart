@@ -106,6 +106,16 @@ class TweetRepository {
     return tweetsList;
   }
 
+  Future<List<Tweet>> getTweetsByHashtag(String hashTag) async {
+    final documents = await _tweetRepo
+        .where('hashTags', arrayContains: hashTag)
+        .orderBy('tweetedAt', descending: true)
+        .get();
+    final tweetsList =
+        documents.docs.map((doc) => Tweet.fromJson(doc.data())).toList();
+    return tweetsList;
+  }
+
   Future<Tweet?> getSingleTweet(String tweetId) async {
     try {
       final singleTweet = await _tweetRepo.doc(tweetId).get();
@@ -180,12 +190,14 @@ class TweetRepository {
     return tweetsList;
   }
 
-  // @override
-  // Future<List<Document>> getTweetsByHashtag(String hashtag) async {
-  //   final documents = await _db.listDocuments(
-  //       databaseId: AppWriteConstants.databaseId,
-  //       collectionId: AppWriteConstants.tweetsCollection,
-  //       queries: [Query.search('hashTags', hashtag)]);
-  //   return documents.documents;
-  // }
+  FutureEither<void> deleteTweet(String tweetId) async {
+    try {
+      final res = _tweetRepo.doc(tweetId).delete();
+
+      return right(res);
+    } catch (error, st) {
+      debugPrint('Can not delete tweet: $error');
+      return left(Failure(e.toString(), st));
+    }
+  }
 }

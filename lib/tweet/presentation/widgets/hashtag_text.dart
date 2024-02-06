@@ -16,7 +16,7 @@ class HashtagOrLinkText extends StatelessWidget {
       (element) {
         if (element.startsWith('#')) {
           textSpans.add(TextSpan(
-              text: ' $element',
+              text: ' $element ',
               style: const TextStyle(
                   color: Pallete.blueColor,
                   fontSize: 18,

@@ -1,12 +1,13 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart'
-    as model;
 import 'package:twitter_clone_2/auth/application/authenticator.dart';
 import 'package:twitter_clone_2/core/domain/type_defs.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/tweet_repository.dart';
+import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart'
+    as model;
 import 'package:twitter_clone_2/user_profile/infrastructure/models/user_profile_state.dart';
 import 'package:twitter_clone_2/user_profile/infrastructure/user_repository.dart';
 
@@ -73,6 +74,7 @@ class UserProfileController extends StateNotifier<UserProfileState> {
         data: (userData, tweetsData) =>
             UserProfileState.data(userData: r, tweetsData: tweetsData),
       );
+      _userRepo.updateUserUI(r.uid, r.profilePic);
     });
     return res;
   }

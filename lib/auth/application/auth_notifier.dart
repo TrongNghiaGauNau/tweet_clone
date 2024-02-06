@@ -5,6 +5,7 @@ import 'package:twitter_clone_2/auth/application/authenticator.dart';
 import 'package:twitter_clone_2/auth/infrastructure/models/auth_state.dart';
 import 'package:twitter_clone_2/auth/presentation/login/login_screen.dart';
 import 'package:twitter_clone_2/core/application/utils.dart';
+import 'package:twitter_clone_2/user_profile/infrastructure/models/user_ui/user_ui.dart';
 import 'package:twitter_clone_2/user_profile/infrastructure/user_repository.dart';
 import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart'
     as model;
@@ -25,7 +26,7 @@ class AuthController extends StateNotifier<AuthState> {
       //sign up in authenticator
       final respond = await _authenticator.signUpWithEmailAndPassword(
           email: email, password: password);
-      respond.fold((l) => showSnackbar(context, l.messsage), (r) async {
+      respond.fold((l) => showSnackbar(context, l.messsage), (uid) async {
         //save user data just signed up to firestore
         final user = model.User(
             email: email,
@@ -34,11 +35,14 @@ class AuthController extends StateNotifier<AuthState> {
             following: const [],
             profilePic: '',
             bannerPic: '',
-            uid: r,
+            uid: uid,
             bio: '',
             isTwitterBlue: false);
-        final res = await _userRepsitory.saveUserData(user, r);
+        final res = await _userRepsitory.saveUserData(user, uid);
         res.fold((l) => showSnackbar(context, l.messsage), (r) {
+          final userUI =
+              UserUI(name: user.name, profilePic: user.profilePic, uid: uid);
+          _userRepsitory.saveUserUIData(userUI, uid);
           showSnackbar(context, 'Account created sucessfully! Please login');
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => const LoginView(),

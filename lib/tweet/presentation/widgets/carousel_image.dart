@@ -1,27 +1,35 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:twitter_clone_2/attachments/presentation/list_files_view.dart';
+import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
 
 class CarouselImage extends HookWidget {
-  const CarouselImage({super.key, required this.imageLinks});
+  const CarouselImage({super.key, required this.tweet});
 
-  final List<String> imageLinks;
+  final Tweet tweet;
   @override
   Widget build(BuildContext context) {
+    final imageLinks = tweet.imagesLink;
     final current = useState(0);
     return Column(
       children: [
+        const SizedBox(height: 5),
         CarouselSlider(
-            items: imageLinks.map(
-              (link) {
+            items: imageLinks.mapWithIndex(
+              (link, index) {
                 return Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
                   ),
                   margin: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Image.network(
-                    link,
-                    fit: BoxFit.cover,
+                  child: GestureDetector(
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          ListFilesView(initialIndex: index, tweet: tweet),
+                    )),
+                    child: SingleImageCarousel(link: link),
                   ),
                 );
               },
@@ -51,6 +59,24 @@ class CarouselImage extends HookWidget {
           }).toList(),
         ),
       ],
+    );
+  }
+}
+
+class SingleImageCarousel extends HookWidget {
+  const SingleImageCarousel({
+    super.key,
+    required this.link,
+  });
+
+  final String link;
+
+  @override
+  Widget build(BuildContext context) {
+    useAutomaticKeepAlive();
+    return Image.network(
+      link,
+      fit: BoxFit.cover,
     );
   }
 }

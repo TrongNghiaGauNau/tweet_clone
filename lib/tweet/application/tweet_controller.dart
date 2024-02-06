@@ -162,8 +162,23 @@ class TweetController extends StateNotifier<TweetListState> {
     }
   }
 
+  FutureVoid getTweetsByHashtag(String hashtag) async {
+    state = state.copyWith(isLoading: true);
+
+    final tweetsListByHashtag =
+        await _tweetRepository.getTweetsByHashtag(hashtag);
+    state = state.copyWith(
+        isLoading: false, tweetsListByHashtag: tweetsListByHashtag);
+  }
+
   addTweet(Tweet tweet) {
     final newData = List.of(state.tweetsList)..insertOrAdd(0, tweet);
+    state = state.copyWith(tweetsList: newData);
+  }
+
+  Future<void> deleteTweet(Tweet tweet) async {
+    await _tweetRepository.deleteTweet(tweet.id);
+    final newData = List.of(state.tweetsList)..remove(tweet);
     state = state.copyWith(tweetsList: newData);
   }
 }

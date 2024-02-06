@@ -6,9 +6,11 @@ import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart'
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:twitter_clone_2/core/domain/failure.dart';
 import 'package:twitter_clone_2/core/domain/type_defs.dart';
+import 'package:twitter_clone_2/user_profile/infrastructure/models/user_ui/user_ui.dart';
 
 class UserRepsitory {
   final _firebaseFirestore = FirebaseFirestore.instance.collection('users');
+  final _userUIRepo = FirebaseFirestore.instance.collection('users_ui');
   final _tweetRepo = FirebaseFirestore.instance.collectionGroup('tweets');
 
   FutureEitherVoid saveUserData(model.User user, String uid) async {
@@ -24,11 +26,34 @@ class UserRepsitory {
     }
   }
 
+  FutureEitherVoid saveUserUIData(UserUI user, String uid) async {
+    try {
+      await _userUIRepo.doc(uid).set(user.toJson());
+      return right(null);
+    } on FirebaseException catch (e, stackTrace) {
+      return left(Failure(
+          'user_api: ${e.message ?? 'Some unexpected error occured'}',
+          stackTrace));
+    } catch (e, stackTrace) {
+      return left(Failure(e.toString(), stackTrace));
+    }
+  }
+
   Future<model.User?> getUserData(String uid) async {
     final documents = await _firebaseFirestore.doc(uid).get();
     final userData = documents.data();
     if (userData != null) {
       final user = model.User.fromJson(userData);
+      return user;
+    }
+    return null;
+  }
+
+  Future<UserUI?> getUserUIData(String uid) async {
+    final documents = await _userUIRepo.doc(uid).get();
+    final userData = documents.data();
+    if (userData != null) {
+      final user = UserUI.fromJson(userData);
       return user;
     }
     return null;
@@ -73,6 +98,23 @@ class UserRepsitory {
         }
       }));
       return right(user);
+    } on FirebaseException catch (e, stackTrace) {
+      return left(Failure(
+          'user_api: ${e.message ?? 'Some unexpected error occured'}',
+          stackTrace));
+    } catch (e, stackTrace) {
+      return left(Failure(e.toString(), stackTrace));
+    }
+  }
+
+  FutureEither<void> updateUserUI(String uid, String profilePic,
+      {bool isTwitterBlue = false}) async {
+    try {
+      //update user information
+      await _userUIRepo
+          .doc(uid)
+          .update({'profilePic': profilePic, 'isTwitterBlue': isTwitterBlue});
+      return right(null);
     } on FirebaseException catch (e, stackTrace) {
       return left(Failure(
           'user_api: ${e.message ?? 'Some unexpected error occured'}',

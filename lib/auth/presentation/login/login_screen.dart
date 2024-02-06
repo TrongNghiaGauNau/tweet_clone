@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone_2/auth/presentation/signup/signup_screen.dart';
 import 'package:twitter_clone_2/auth/presentation/widget/auth_field.dart';
 import 'package:twitter_clone_2/auth/shared/providers.dart';
+import 'package:twitter_clone_2/core/application/utils.dart';
 import 'package:twitter_clone_2/core/presentation/common/rounded_small_button.dart';
 import 'package:twitter_clone_2/core/presentation/constants/ui_constants.dart';
 import 'package:twitter_clone_2/theme/pallete.dart';
@@ -18,13 +19,15 @@ class LoginView extends HookConsumerWidget {
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
     void onLogin() async {
+      if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+        showSnackbar(context, 'Please dont leave email or password blanked');
+        return;
+      }
       ref.read(authControllerProvider.notifier).login(
           email: emailController.text,
           password: passwordController.text,
           context: context);
     }
-
-    // final authState = ref.watch(authControllerProvider);
 
     return Scaffold(
       appBar: appBar,

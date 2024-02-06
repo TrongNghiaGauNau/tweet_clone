@@ -5,7 +5,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:like_button/like_button.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:twitter_clone_2/auth/shared/providers.dart';
 import 'package:twitter_clone_2/core/application/const.dart';
 import 'package:twitter_clone_2/core/presentation/constants/assets_constants.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
@@ -17,8 +16,8 @@ import 'package:twitter_clone_2/tweet/presentation/widgets/carousel_image.dart';
 import 'package:twitter_clone_2/tweet/presentation/widgets/hashtag_text.dart';
 import 'package:twitter_clone_2/tweet/presentation/widgets/loading_single_tweet.dart';
 import 'package:twitter_clone_2/tweet/presentation/widgets/tweet_icons_button.dart';
+import 'package:twitter_clone_2/tweet/presentation/widgets/tweet_menu_popup.dart';
 import 'package:twitter_clone_2/tweet/shared/providers.dart';
-import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart';
 import 'package:twitter_clone_2/user_profile/presentation/views/profile_screen.dart';
 
 class TweetCard extends HookConsumerWidget {
@@ -31,7 +30,6 @@ class TweetCard extends HookConsumerWidget {
     useAutomaticKeepAlive();
     final tweet = ref.watch(singleTweetControllerProvider(tweetData.id));
     final currentUser = ref.watch(firebaseAuthProvider).currentUser;
-    final currentUserDetail = ref.watch(currentUserDetailsProvider).value;
     return currentUser == null || tweet == null
         ? const LoadingSingleTweet()
         : Column(
@@ -103,11 +101,15 @@ class TweetCard extends HookConsumerWidget {
                               style: const TextStyle(
                                   fontSize: 17, color: Pallete.greyColor),
                             ),
+                            const Spacer(),
+                            if (currentUser.uid ==
+                                tweet.tweetCreator[TweetCreator.creatorUID])
+                              TweetMenuPopup(tweet: tweet),
                           ],
                         ),
                         HashtagOrLinkText(text: tweet.text),
                         if (tweet.tweetType == TweetType.image.name)
-                          CarouselImage(imageLinks: tweet.imagesLink),
+                          CarouselImage(tweet: tweet),
                         Container(
                           margin: const EdgeInsets.only(top: 10, right: 20),
                           child: Row(

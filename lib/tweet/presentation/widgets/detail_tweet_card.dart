@@ -1,4 +1,3 @@
-import 'package:any_link_preview/any_link_preview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,6 +14,7 @@ import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.da
 import 'package:twitter_clone_2/tweet/presentation/widgets/carousel_image.dart';
 import 'package:twitter_clone_2/tweet/presentation/widgets/hashtag_text.dart';
 import 'package:twitter_clone_2/tweet/presentation/widgets/tweet_icons_button.dart';
+import 'package:twitter_clone_2/tweet/presentation/widgets/tweet_menu_popup.dart';
 import 'package:twitter_clone_2/tweet/shared/providers.dart';
 import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart'
     as model;
@@ -45,8 +45,8 @@ class DetailTweetCard extends HookConsumerWidget {
               margin: const EdgeInsets.all(10).copyWith(top: 1),
               child: CircleAvatar(
                 backgroundImage: NetworkImage(user != null
-                    ? user!.profilePic != ''
-                        ? user!.profilePic
+                    ? user.profilePic.isNotEmpty
+                        ? user.profilePic
                         : defaultAvatar
                     : defaultAvatar),
                 radius: 35,
@@ -81,7 +81,7 @@ class DetailTweetCard extends HookConsumerWidget {
                     children: [
                       Container(
                         margin: const EdgeInsets.only(right: 5),
-                        child: Text(user != null ? user!.name : 'username',
+                        child: Text(user != null ? user.name : 'username',
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 19)),
                       ),
@@ -91,15 +91,13 @@ class DetailTweetCard extends HookConsumerWidget {
                         style: const TextStyle(
                             fontSize: 17, color: Pallete.greyColor),
                       ),
+                      const Spacer(),
+                      TweetMenuPopup(tweet: tweet, isPop: true),
                     ],
                   ),
                   HashtagOrLinkText(text: tweet.text),
                   if (tweet.tweetType == TweetType.image.name)
-                    CarouselImage(imageLinks: tweet.imagesLink),
-                  if (tweet.link.isNotEmpty && tweet.imagesLink.isEmpty) ...[
-                    const SizedBox(height: 5),
-                    AnyLinkPreview(link: 'https://${tweet.link}')
-                  ],
+                    CarouselImage(tweet: tweet),
                   Container(
                     margin: const EdgeInsets.only(top: 10, right: 20),
                     child: Row(
