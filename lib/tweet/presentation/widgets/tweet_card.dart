@@ -6,6 +6,7 @@ import 'package:like_button/like_button.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:twitter_clone_2/core/application/const.dart';
+import 'package:twitter_clone_2/core/application/utils.dart';
 import 'package:twitter_clone_2/core/presentation/constants/assets_constants.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
 import 'package:twitter_clone_2/theme/pallete.dart';
@@ -63,7 +64,7 @@ class TweetCard extends HookConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         //retweeted
-                        if (tweet.retweetedBy.isNotEmpty)
+                        if (tweet.reTweeetId.isNotEmpty)
                           Row(
                             children: [
                               SvgPicture.asset(
@@ -74,9 +75,9 @@ class TweetCard extends HookConsumerWidget {
                               const SizedBox(
                                 width: 2,
                               ),
-                              Text(
-                                '${tweet.retweetedBy} retweeted',
-                                style: const TextStyle(
+                              const Text(
+                                ' retweeted',
+                                style: TextStyle(
                                     color: Pallete.greyColor,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500),
@@ -110,6 +111,86 @@ class TweetCard extends HookConsumerWidget {
                         HashtagOrLinkText(text: tweet.text),
                         if (tweet.tweetType == TweetType.image.name)
                           CarouselImage(tweet: tweet),
+                        const SizedBox(height: 5),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final childTweet = ref.watch(
+                                singleTweetControllerProvider(
+                                    tweet.reTweeetId));
+                            if (childTweet == null) {
+                              return const SizedBox.shrink();
+                            }
+                            return Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.all(5).copyWith(left: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    InkWell(
+                                      onTap: () => Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) =>
+                                            TwitterDetailScreen(
+                                                tweetId: childTweet.id),
+                                      )),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.all(10)
+                                                .copyWith(top: 1),
+                                            child: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  childTweet.tweetCreator[
+                                                          TweetCreator
+                                                              .creatorAvatar] ??
+                                                      defaultAvatar),
+                                              radius: 20,
+                                            ),
+                                          ),
+                                          Container(
+                                            margin:
+                                                const EdgeInsets.only(right: 5),
+                                            child: Text(
+                                                childTweet.tweetCreator[
+                                                        TweetCreator
+                                                            .creatorName] ??
+                                                    'username',
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 19)),
+                                          ),
+                                          Text(
+                                            timeago.format(
+                                                DateTime.parse(
+                                                    childTweet.tweetedAt),
+                                                locale: 'en_short'),
+                                            style: const TextStyle(
+                                                fontSize: 17,
+                                                color: Pallete.greyColor),
+                                          ),
+                                          const Spacer(),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child:
+                                          HashtagOrLinkText(text: tweet.text),
+                                    ),
+                                    if (childTweet.tweetType ==
+                                        TweetType.image.name)
+                                      CarouselImage(tweet: childTweet),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                         Container(
                           margin: const EdgeInsets.only(top: 10, right: 20),
                           child: Row(
@@ -127,9 +208,8 @@ class TweetCard extends HookConsumerWidget {
                                 text: (tweet.commentsIds.length).toString(),
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => TwitterDetailScreen(
-                                        tweetId: tweet.id,
-                                        commentsIds: tweet.commentsIds),
+                                    builder: (context) =>
+                                        TwitterDetailScreen(tweetId: tweet.id),
                                   ));
                                 },
                               ),
@@ -141,15 +221,17 @@ class TweetCard extends HookConsumerWidget {
                                   final reshareListTweet = await ref
                                       .read(tweetControllerProvider.notifier)
                                       .reshareTweet(
-                                          tweet,
-                                          tweet.tweetCreator[
-                                                  TweetCreator.creatorName] ??
-                                              'username',
-                                          context);
+                                          tweet, context, currentUser.uid);
+                                  if (reshareListTweet == null &&
+                                      context.mounted) {
+                                    showSnackbar(context,
+                                        'Oops. Can not retweet due to some error');
+                                    return;
+                                  }
                                   //add tweet moi dc tao len tren dau list news
                                   ref
                                       .read(tweetControllerProvider.notifier)
-                                      .addTweet(reshareListTweet[1]);
+                                      .addTweet(reshareListTweet![1]);
                                   //thay doi state trong single
                                   ref
                                       .read(singleTweetControllerProvider(

@@ -160,18 +160,15 @@ class TweetRepository {
     }
   }
 
-  FutureEither<List<Comment>> getTweetComments(
-      List<String> tweetCommentIds) async {
+  FutureEither<List<Comment>> getTweetComments(String tweetId) async {
     try {
-      final List<Comment> tweetComments = [];
-      //get commments
-      for (final tweetId in tweetCommentIds) {
-        final result = await _commentRepo
-            .where('id', isEqualTo: tweetId)
-            .get()
-            .then((value) => value.docs[0]);
-        tweetComments.add(Comment.fromJson(result.data()));
-      }
+      final documents = await _commentRepo
+          .where('tweetId', isEqualTo: tweetId)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      final tweetComments =
+          documents.docs.map((doc) => Comment.fromJson(doc.data())).toList();
 
       return right(tweetComments);
     } catch (error, st) {

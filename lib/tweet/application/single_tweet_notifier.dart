@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone_2/core/domain/type_defs.dart';
 import 'package:twitter_clone_2/notifications/application/notification_notifier.dart';
 import 'package:twitter_clone_2/notifications/infrastructure/models/notification_model.dart';
+import 'package:twitter_clone_2/tweet/application/tweet_comment_notifier.dart';
 import 'package:twitter_clone_2/tweet/application/tweet_const.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/tweet_repository.dart';

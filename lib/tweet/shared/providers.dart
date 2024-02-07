@@ -8,7 +8,6 @@ import 'package:twitter_clone_2/tweet/application/tweet_controller.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/comment/comment_state.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/tweet_list_state.dart';
-import 'package:twitter_clone_2/user_profile/shared/providers.dart';
 
 final tweetControllerProvider =
     StateNotifierProvider<TweetController, TweetListState>((ref) {

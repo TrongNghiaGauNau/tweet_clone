@@ -238,8 +238,8 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
                   children: tweetsWithImages.mapWithIndex((tweet, index) {
                     return GestureDetector(
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => TwitterDetailScreen(
-                            tweetId: tweet.id, commentsIds: tweet.commentsIds),
+                        builder: (context) =>
+                            TwitterDetailScreen(tweetId: tweet.id),
                       )),
                       child: SizedBox(
                         width: itemSize,

@@ -36,8 +36,9 @@ class CreateTweetScreen extends HookConsumerWidget with LoadingMixin {
         showSnackbar(context, 'Please enter text');
         return;
       }
-      final asyncTask = ref.read(tweetControllerProvider.notifier).shareTweet(
-          images: images.value, text: tweetTextController.text, repliedTo: '');
+      final asyncTask = ref
+          .read(tweetControllerProvider.notifier)
+          .shareTweet(images: images.value, text: tweetTextController.text);
 
       final res = await doAsyncTask(context, asyncTask: asyncTask);
       if (res == null) {

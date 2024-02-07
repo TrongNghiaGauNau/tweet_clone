@@ -63,6 +63,7 @@ class TweetCommentNotifier extends StateNotifier<CommentState> {
       createdAt: DateTime.now().toIso8601String(),
       likes: [],
       id: id,
+      tweetId: tweet.id,
       repliedTo: repliedTo,
     );
     final commentsIds = [...tweet.commentsIds];
@@ -80,19 +81,19 @@ class TweetCommentNotifier extends StateNotifier<CommentState> {
           receiverID: tweet.tweetCreator[TweetCreator.creatorUID]!,
           senderID: uid,
         );
-        getTweetComments(commentsIds);
+        getTweetComments(tweet.id);
         return right(tweet);
       },
     );
   }
 
-  FutureVoid getTweetComments(List<String> commentsIds) async {
+  FutureVoid getTweetComments(String tweetId) async {
     state = state.copyWith(isLoading: true);
-    final tweetCommentsList = await _repo.getTweetComments(commentsIds);
+    final tweetCommentsList = await _repo.getTweetComments(tweetId);
     tweetCommentsList.fold((l) => debugPrint('Can not get tweet comments'),
         (r) {
-      List<Comment> sortedComments = [...r.reversed];
-      state = state.copyWith(tweetComments: sortedComments);
+      // List<Comment> sortedComments = [...r.reversed];
+      state = state.copyWith(tweetComments: r);
     });
     state = state.copyWith(isLoading: false);
   }

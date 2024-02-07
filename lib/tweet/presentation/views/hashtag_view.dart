@@ -23,30 +23,30 @@ class HashTagView extends HookConsumerWidget {
       return null;
     }, []);
 
-    if (tweets.isEmpty) {
-      return const Center(child: Text('There is no tweet match with hashtag'));
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text(hashtag),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: () async {
-                await ref
-                    .refresh(tweetControllerProvider.notifier)
-                    .getTweets(ref);
-                return Future.delayed(const Duration(seconds: 1));
-              },
-              child: ListView.builder(
-                itemCount: tweets.length,
-                itemBuilder: (context, index) {
-                  final tweet = tweets[index];
-                  return TweetCard(tweetData: tweet);
-                },
-              ),
-            ),
+          : tweets.isEmpty
+              ? const Center(
+                  child: Text('There is no tweet match with hashtag'))
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    await ref
+                        .refresh(tweetControllerProvider.notifier)
+                        .getTweets(ref);
+                    return Future.delayed(const Duration(seconds: 1));
+                  },
+                  child: ListView.builder(
+                    itemCount: tweets.length,
+                    itemBuilder: (context, index) {
+                      final tweet = tweets[index];
+                      return TweetCard(tweetData: tweet);
+                    },
+                  ),
+                ),
     );
   }
 }

@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 void showSnackbar(BuildContext context, String content) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(content)));
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(content),
+    duration: const Duration(seconds: 2),
+  ));
 }
 
 String getNameFromEmail(String email) {

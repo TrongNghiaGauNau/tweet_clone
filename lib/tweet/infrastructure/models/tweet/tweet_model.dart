@@ -17,8 +17,7 @@ class Tweet with _$Tweet {
     required List<String> commentsIds,
     required String id,
     required int reshareCount,
-    required String retweetedBy,
-    required String repliedTo,
+    required String reTweeetId,
     required Map<String, String> tweetCreator,
   }) = _Tweet;
 

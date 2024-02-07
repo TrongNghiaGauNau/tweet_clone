@@ -27,7 +27,6 @@ class TweetController extends StateNotifier<TweetListState> {
   Future<Either<Failure, Tweet>?> shareTweet({
     required List<File> images,
     required String text,
-    required String repliedTo,
   }) async {
     final userId = ref.read(firebaseAuthProvider).currentUser?.uid ?? '';
     final currentUser = await ref
@@ -43,14 +42,10 @@ class TweetController extends StateNotifier<TweetListState> {
     };
     if (images.isNotEmpty) {
       final res = await _shareImageTweet(
-          images: images,
-          text: text,
-          repliedTo: repliedTo,
-          tweetCreator: tweetCreator);
+          images: images, text: text, tweetCreator: tweetCreator);
       return res;
     } else {
-      final res = await _shareTextTweet(
-          text: text, repliedTo: repliedTo, tweetCreator: tweetCreator);
+      final res = await _shareTextTweet(text: text, tweetCreator: tweetCreator);
       return res;
     }
   }
@@ -58,7 +53,6 @@ class TweetController extends StateNotifier<TweetListState> {
   Future<Either<Failure, Tweet>> _shareImageTweet(
       {required List<File> images,
       required String text,
-      required String repliedTo,
       required Map<String, String> tweetCreator}) async {
     state = state.copyWith(isLoading: true);
     final hashTags = getHashtagsFromText(text);
@@ -76,8 +70,7 @@ class TweetController extends StateNotifier<TweetListState> {
       commentsIds: const [],
       id: uuid.v4(),
       reshareCount: 0,
-      retweetedBy: '',
-      repliedTo: repliedTo,
+      reTweeetId: '',
       tweetCreator: tweetCreator,
     );
     final res = await _tweetRepository.shareTweet(tweet);
@@ -86,9 +79,7 @@ class TweetController extends StateNotifier<TweetListState> {
   }
 
   Future<Either<Failure, Tweet>> _shareTextTweet(
-      {required String text,
-      required String repliedTo,
-      required Map<String, String> tweetCreator}) async {
+      {required String text, required Map<String, String> tweetCreator}) async {
     state = state.copyWith(isLoading: true);
     final hashTags = getHashtagsFromText(text);
     final link = getLinkFromText(text);
@@ -104,23 +95,45 @@ class TweetController extends StateNotifier<TweetListState> {
         commentsIds: const [],
         id: uuid.v4(),
         reshareCount: 0,
-        retweetedBy: '',
-        repliedTo: repliedTo,
+        reTweeetId: '',
         tweetCreator: tweetCreator);
     final res = await _tweetRepository.shareTweet(tweet);
     state = state.copyWith(isLoading: false);
     return res;
   }
 
-  Future<List<Tweet>> reshareTweet(
-      Tweet tweet, String currentUserName, BuildContext context) async {
+  Future<List<Tweet>?> reshareTweet(
+      Tweet tweet, BuildContext context, String retweetUserId) async {
+    final currentUser = await ref
+        .read(userControllerProvider.notifier)
+        .getUserDetailInfo(retweetUserId);
+    if (currentUser == null) {
+      return null;
+    }
+    final Map<String, String> tweetCreator = {
+      TweetCreator.creatorAvatar: currentUser.profilePic,
+      TweetCreator.creatorUID: currentUser.uid,
+      TweetCreator.creatorName: currentUser.name,
+    };
+
     tweet = tweet.copyWith(reshareCount: tweet.reshareCount + 1);
     final newId = const Uuid().v4();
-    final newTweet = tweet.copyWith(
-        id: newId,
-        reshareCount: 0,
-        retweetedBy: currentUserName,
-        tweetedAt: DateTime.now().toIso8601String());
+    // final hashTags = getHashtagsFromText(text);
+    // final link = getLinkFromText(text);
+    final newTweet = Tweet(
+      text: '',
+      hashTags: [],
+      link: '',
+      imagesLink: [],
+      tweetType: TweetType.text.name,
+      tweetedAt: DateTime.now().toIso8601String(),
+      likes: const [],
+      commentsIds: const [],
+      id: newId,
+      reshareCount: 0,
+      reTweeetId: tweet.id,
+      tweetCreator: tweetCreator,
+    );
 
     //update original tweet reshare count
     final res = await _tweetRepository.updateReshareAccount(tweet);
@@ -131,13 +144,7 @@ class TweetController extends StateNotifier<TweetListState> {
       if (context.mounted) {
         showSnackbar(context, 'Reshare tweet successfully');
       }
-      res2.fold((l) => debugPrint(l.messsage), (r) {
-        // _notificationController.createNotification(
-        //     text: '${currentUser.name} reshare your tweet',
-        //     postId: tweet.id,
-        //     notificationType: NotificationType.retweet,
-        //     uid: tweet.uid);
-      });
+      res2.fold((l) => debugPrint(l.messsage), (r) => null);
     });
     return [tweet, newTweet];
   }

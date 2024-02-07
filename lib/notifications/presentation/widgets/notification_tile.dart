@@ -43,8 +43,8 @@ class NotificationTile extends HookConsumerWidget {
           onTap: () {
             if (tweet == null) return;
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => TwitterDetailScreen(
-                  tweetId: notification.postId, commentsIds: tweet.commentsIds),
+              builder: (context) =>
+                  TwitterDetailScreen(tweetId: notification.postId),
             ));
           },
           child: Column(

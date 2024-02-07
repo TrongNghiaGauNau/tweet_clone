@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone_2/core/application/utils.dart';
+import 'package:twitter_clone_2/core/presentation/mixin.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
 import 'package:twitter_clone_2/tweet/shared/providers.dart';
 
-class TweetCommentSendBox extends HookConsumerWidget {
+class TweetCommentSendBox extends HookConsumerWidget with DismissKeyboard {
   const TweetCommentSendBox(
       {required this.tweet,
       required this.txtCtrl,
@@ -62,6 +63,7 @@ class TweetCommentSendBox extends HookConsumerWidget {
                                   uid: currentUser.uid,
                                   repliedTo: '');
                           res.fold((l) => debugPrint(l.messsage), (r) {
+                            dismiss();
                             ref
                                 .read(singleTweetControllerProvider(tweet.id)
                                     .notifier)

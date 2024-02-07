@@ -30,8 +30,7 @@ mixin _$Tweet {
   List<String> get commentsIds => throw _privateConstructorUsedError;
   String get id => throw _privateConstructorUsedError;
   int get reshareCount => throw _privateConstructorUsedError;
-  String get retweetedBy => throw _privateConstructorUsedError;
-  String get repliedTo => throw _privateConstructorUsedError;
+  String get reTweeetId => throw _privateConstructorUsedError;
   Map<String, String> get tweetCreator => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -55,8 +54,7 @@ abstract class $TweetCopyWith<$Res> {
       List<String> commentsIds,
       String id,
       int reshareCount,
-      String retweetedBy,
-      String repliedTo,
+      String reTweeetId,
       Map<String, String> tweetCreator});
 }
 
@@ -83,8 +81,7 @@ class _$TweetCopyWithImpl<$Res, $Val extends Tweet>
     Object? commentsIds = null,
     Object? id = null,
     Object? reshareCount = null,
-    Object? retweetedBy = null,
-    Object? repliedTo = null,
+    Object? reTweeetId = null,
     Object? tweetCreator = null,
   }) {
     return _then(_value.copyWith(
@@ -128,13 +125,9 @@ class _$TweetCopyWithImpl<$Res, $Val extends Tweet>
           ? _value.reshareCount
           : reshareCount // ignore: cast_nullable_to_non_nullable
               as int,
-      retweetedBy: null == retweetedBy
-          ? _value.retweetedBy
-          : retweetedBy // ignore: cast_nullable_to_non_nullable
-              as String,
-      repliedTo: null == repliedTo
-          ? _value.repliedTo
-          : repliedTo // ignore: cast_nullable_to_non_nullable
+      reTweeetId: null == reTweeetId
+          ? _value.reTweeetId
+          : reTweeetId // ignore: cast_nullable_to_non_nullable
               as String,
       tweetCreator: null == tweetCreator
           ? _value.tweetCreator
@@ -162,8 +155,7 @@ abstract class _$$TweetImplCopyWith<$Res> implements $TweetCopyWith<$Res> {
       List<String> commentsIds,
       String id,
       int reshareCount,
-      String retweetedBy,
-      String repliedTo,
+      String reTweeetId,
       Map<String, String> tweetCreator});
 }
 
@@ -188,8 +180,7 @@ class __$$TweetImplCopyWithImpl<$Res>
     Object? commentsIds = null,
     Object? id = null,
     Object? reshareCount = null,
-    Object? retweetedBy = null,
-    Object? repliedTo = null,
+    Object? reTweeetId = null,
     Object? tweetCreator = null,
   }) {
     return _then(_$TweetImpl(
@@ -233,13 +224,9 @@ class __$$TweetImplCopyWithImpl<$Res>
           ? _value.reshareCount
           : reshareCount // ignore: cast_nullable_to_non_nullable
               as int,
-      retweetedBy: null == retweetedBy
-          ? _value.retweetedBy
-          : retweetedBy // ignore: cast_nullable_to_non_nullable
-              as String,
-      repliedTo: null == repliedTo
-          ? _value.repliedTo
-          : repliedTo // ignore: cast_nullable_to_non_nullable
+      reTweeetId: null == reTweeetId
+          ? _value.reTweeetId
+          : reTweeetId // ignore: cast_nullable_to_non_nullable
               as String,
       tweetCreator: null == tweetCreator
           ? _value._tweetCreator
@@ -263,8 +250,7 @@ class _$TweetImpl implements _Tweet {
       required final List<String> commentsIds,
       required this.id,
       required this.reshareCount,
-      required this.retweetedBy,
-      required this.repliedTo,
+      required this.reTweeetId,
       required final Map<String, String> tweetCreator})
       : _hashTags = hashTags,
         _imagesLink = imagesLink,
@@ -320,9 +306,7 @@ class _$TweetImpl implements _Tweet {
   @override
   final int reshareCount;
   @override
-  final String retweetedBy;
-  @override
-  final String repliedTo;
+  final String reTweeetId;
   final Map<String, String> _tweetCreator;
   @override
   Map<String, String> get tweetCreator {
@@ -333,7 +317,7 @@ class _$TweetImpl implements _Tweet {
 
   @override
   String toString() {
-    return 'Tweet(text: $text, hashTags: $hashTags, link: $link, imagesLink: $imagesLink, tweetType: $tweetType, tweetedAt: $tweetedAt, likes: $likes, commentsIds: $commentsIds, id: $id, reshareCount: $reshareCount, retweetedBy: $retweetedBy, repliedTo: $repliedTo, tweetCreator: $tweetCreator)';
+    return 'Tweet(text: $text, hashTags: $hashTags, link: $link, imagesLink: $imagesLink, tweetType: $tweetType, tweetedAt: $tweetedAt, likes: $likes, commentsIds: $commentsIds, id: $id, reshareCount: $reshareCount, reTweeetId: $reTweeetId, tweetCreator: $tweetCreator)';
   }
 
   @override
@@ -356,10 +340,8 @@ class _$TweetImpl implements _Tweet {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.reshareCount, reshareCount) ||
                 other.reshareCount == reshareCount) &&
-            (identical(other.retweetedBy, retweetedBy) ||
-                other.retweetedBy == retweetedBy) &&
-            (identical(other.repliedTo, repliedTo) ||
-                other.repliedTo == repliedTo) &&
+            (identical(other.reTweeetId, reTweeetId) ||
+                other.reTweeetId == reTweeetId) &&
             const DeepCollectionEquality()
                 .equals(other._tweetCreator, _tweetCreator));
   }
@@ -378,8 +360,7 @@ class _$TweetImpl implements _Tweet {
       const DeepCollectionEquality().hash(_commentsIds),
       id,
       reshareCount,
-      retweetedBy,
-      repliedTo,
+      reTweeetId,
       const DeepCollectionEquality().hash(_tweetCreator));
 
   @JsonKey(ignore: true)
@@ -408,8 +389,7 @@ abstract class _Tweet implements Tweet {
       required final List<String> commentsIds,
       required final String id,
       required final int reshareCount,
-      required final String retweetedBy,
-      required final String repliedTo,
+      required final String reTweeetId,
       required final Map<String, String> tweetCreator}) = _$TweetImpl;
 
   factory _Tweet.fromJson(Map<String, dynamic> json) = _$TweetImpl.fromJson;
@@ -435,9 +415,7 @@ abstract class _Tweet implements Tweet {
   @override
   int get reshareCount;
   @override
-  String get retweetedBy;
-  @override
-  String get repliedTo;
+  String get reTweeetId;
   @override
   Map<String, String> get tweetCreator;
   @override

@@ -15,6 +15,7 @@ class Comment with _$Comment {
     required String createdAt,
     required List<String>? likes,
     required String id,
+    required String tweetId,
     required String? repliedTo,
   }) = _Comment;
 

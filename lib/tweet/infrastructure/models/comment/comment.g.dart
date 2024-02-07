@@ -21,6 +21,7 @@ _$CommentImpl _$$CommentImplFromJson(Map<String, dynamic> json) =>
       likes:
           (json['likes'] as List<dynamic>?)?.map((e) => e as String).toList(),
       id: json['id'] as String,
+      tweetId: json['tweetId'] as String,
       repliedTo: json['repliedTo'] as String?,
     );
 
@@ -34,5 +35,6 @@ Map<String, dynamic> _$$CommentImplToJson(_$CommentImpl instance) =>
       'createdAt': instance.createdAt,
       'likes': instance.likes,
       'id': instance.id,
+      'tweetId': instance.tweetId,
       'repliedTo': instance.repliedTo,
     };

@@ -28,6 +28,7 @@ mixin _$Comment {
   String get createdAt => throw _privateConstructorUsedError;
   List<String>? get likes => throw _privateConstructorUsedError;
   String get id => throw _privateConstructorUsedError;
+  String get tweetId => throw _privateConstructorUsedError;
   String? get repliedTo => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,6 +50,7 @@ abstract class $CommentCopyWith<$Res> {
       String createdAt,
       List<String>? likes,
       String id,
+      String tweetId,
       String? repliedTo});
 }
 
@@ -73,6 +75,7 @@ class _$CommentCopyWithImpl<$Res, $Val extends Comment>
     Object? createdAt = null,
     Object? likes = freezed,
     Object? id = null,
+    Object? tweetId = null,
     Object? repliedTo = freezed,
   }) {
     return _then(_value.copyWith(
@@ -108,6 +111,10 @@ class _$CommentCopyWithImpl<$Res, $Val extends Comment>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      tweetId: null == tweetId
+          ? _value.tweetId
+          : tweetId // ignore: cast_nullable_to_non_nullable
+              as String,
       repliedTo: freezed == repliedTo
           ? _value.repliedTo
           : repliedTo // ignore: cast_nullable_to_non_nullable
@@ -132,6 +139,7 @@ abstract class _$$CommentImplCopyWith<$Res> implements $CommentCopyWith<$Res> {
       String createdAt,
       List<String>? likes,
       String id,
+      String tweetId,
       String? repliedTo});
 }
 
@@ -154,6 +162,7 @@ class __$$CommentImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? likes = freezed,
     Object? id = null,
+    Object? tweetId = null,
     Object? repliedTo = freezed,
   }) {
     return _then(_$CommentImpl(
@@ -189,6 +198,10 @@ class __$$CommentImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      tweetId: null == tweetId
+          ? _value.tweetId
+          : tweetId // ignore: cast_nullable_to_non_nullable
+              as String,
       repliedTo: freezed == repliedTo
           ? _value.repliedTo
           : repliedTo // ignore: cast_nullable_to_non_nullable
@@ -209,6 +222,7 @@ class _$CommentImpl implements _Comment {
       required this.createdAt,
       required final List<String>? likes,
       required this.id,
+      required this.tweetId,
       required this.repliedTo})
       : _hashTags = hashTags,
         _imagesLink = imagesLink,
@@ -258,11 +272,13 @@ class _$CommentImpl implements _Comment {
   @override
   final String id;
   @override
+  final String tweetId;
+  @override
   final String? repliedTo;
 
   @override
   String toString() {
-    return 'Comment(text: $text, hashTags: $hashTags, link: $link, imagesLink: $imagesLink, uid: $uid, createdAt: $createdAt, likes: $likes, id: $id, repliedTo: $repliedTo)';
+    return 'Comment(text: $text, hashTags: $hashTags, link: $link, imagesLink: $imagesLink, uid: $uid, createdAt: $createdAt, likes: $likes, id: $id, tweetId: $tweetId, repliedTo: $repliedTo)';
   }
 
   @override
@@ -280,6 +296,7 @@ class _$CommentImpl implements _Comment {
                 other.createdAt == createdAt) &&
             const DeepCollectionEquality().equals(other._likes, _likes) &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.tweetId, tweetId) || other.tweetId == tweetId) &&
             (identical(other.repliedTo, repliedTo) ||
                 other.repliedTo == repliedTo));
   }
@@ -296,6 +313,7 @@ class _$CommentImpl implements _Comment {
       createdAt,
       const DeepCollectionEquality().hash(_likes),
       id,
+      tweetId,
       repliedTo);
 
   @JsonKey(ignore: true)
@@ -322,6 +340,7 @@ abstract class _Comment implements Comment {
       required final String createdAt,
       required final List<String>? likes,
       required final String id,
+      required final String tweetId,
       required final String? repliedTo}) = _$CommentImpl;
 
   factory _Comment.fromJson(Map<String, dynamic> json) = _$CommentImpl.fromJson;
@@ -342,6 +361,8 @@ abstract class _Comment implements Comment {
   List<String>? get likes;
   @override
   String get id;
+  @override
+  String get tweetId;
   @override
   String? get repliedTo;
   @override

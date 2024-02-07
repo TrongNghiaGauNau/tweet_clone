@@ -22,8 +22,7 @@ _$TweetImpl _$$TweetImplFromJson(Map<String, dynamic> json) => _$TweetImpl(
           .toList(),
       id: json['id'] as String,
       reshareCount: json['reshareCount'] as int,
-      retweetedBy: json['retweetedBy'] as String,
-      repliedTo: json['repliedTo'] as String,
+      reTweeetId: json['reTweeetId'] as String,
       tweetCreator: Map<String, String>.from(json['tweetCreator'] as Map),
     );
 
@@ -39,7 +38,6 @@ Map<String, dynamic> _$$TweetImplToJson(_$TweetImpl instance) =>
       'commentsIds': instance.commentsIds,
       'id': instance.id,
       'reshareCount': instance.reshareCount,
-      'retweetedBy': instance.retweetedBy,
-      'repliedTo': instance.repliedTo,
+      'reTweeetId': instance.reTweeetId,
       'tweetCreator': instance.tweetCreator,
     };
