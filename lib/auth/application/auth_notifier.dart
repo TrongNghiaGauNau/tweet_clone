@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone_2/auth/application/authenticator.dart';
@@ -29,15 +28,18 @@ class AuthController extends StateNotifier<AuthState> {
       respond.fold((l) => showSnackbar(context, l.messsage), (uid) async {
         //save user data just signed up to firestore
         final user = model.User(
-            email: email,
-            name: getNameFromEmail(email),
-            followers: const [],
-            following: const [],
-            profilePic: '',
-            bannerPic: '',
-            uid: uid,
-            bio: '',
-            isTwitterBlue: false);
+          email: email,
+          name: getNameFromEmail(email),
+          followers: const [],
+          following: const [],
+          profilePic: '',
+          bannerPic: '',
+          uid: uid,
+          bio: '',
+          isTwitterBlue: false,
+          isOnline: false,
+          lastActive: '',
+        );
         final res = await _userRepsitory.saveUserData(user, uid);
         res.fold((l) => showSnackbar(context, l.messsage), (r) {
           final userUI =

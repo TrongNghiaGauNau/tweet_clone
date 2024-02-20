@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:twitter_clone_2/auth/application/authenticator.dart';
+import 'package:twitter_clone_2/core/domain/failure.dart';
 import 'package:twitter_clone_2/core/domain/type_defs.dart';
 import 'package:twitter_clone_2/notifications/application/notification_notifier.dart';
 import 'package:twitter_clone_2/notifications/infrastructure/models/notification_model.dart';
@@ -138,5 +141,26 @@ class UserProfileController extends StateNotifier<UserProfileState> {
             tweetsData: tweetsData),
       );
     });
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getUserOnlineInfo(String userId) {
+    final stream = _userRepo.getUserOnlineInfo(userId);
+
+    return stream;
+  }
+
+  FutureEither<void> updateActiveStatus(bool isOnline) async {
+    try {
+      final userId = _authenticator.currentUser?.uid;
+      final res = await _userRepo.updateActiveStatus(userId ?? '', isOnline);
+
+      return res;
+    } on FirebaseException catch (e, stackTrace) {
+      return left(Failure(
+          'user_api: ${e.message ?? 'Some unexpected error occured'}',
+          stackTrace));
+    } catch (e, stackTrace) {
+      return left(Failure(e.toString(), stackTrace));
+    }
   }
 }

@@ -13,6 +13,10 @@ class UserRepsitory {
   final _userUIRepo = FirebaseFirestore.instance.collection('users_ui');
   final _tweetRepo = FirebaseFirestore.instance.collectionGroup('tweets');
 
+  CollectionReference getAllUserDemo() {
+    return _userUIRepo;
+  }
+
   FutureEitherVoid saveUserData(model.User user, String uid) async {
     try {
       await _firebaseFirestore.doc(uid).set(user.toJson());
@@ -114,6 +118,38 @@ class UserRepsitory {
       await _userUIRepo
           .doc(uid)
           .update({'profilePic': profilePic, 'isTwitterBlue': isTwitterBlue});
+      return right(null);
+    } on FirebaseException catch (e, stackTrace) {
+      return left(Failure(
+          'user_api: ${e.message ?? 'Some unexpected error occured'}',
+          stackTrace));
+    } catch (e, stackTrace) {
+      return left(Failure(e.toString(), stackTrace));
+    }
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getUserOnlineInfo(String userId) {
+    final stream =
+        _firebaseFirestore.where('uid', isEqualTo: userId).snapshots();
+
+    return stream;
+  }
+
+  FutureEither<void> updateActiveStatus(String userId, bool isOnline) async {
+    try {
+      //update user information
+      final now = DateTime.now().toIso8601String();
+      if (isOnline) {
+        await _firebaseFirestore
+            .doc(userId)
+            .update({'isOnline': isOnline, 'lastActive': ''});
+      } else {
+        await _firebaseFirestore
+            .doc(userId)
+            .update({'isOnline': isOnline, 'lastActive': now});
+      }
+
+      //update all tweet information this user post
       return right(null);
     } on FirebaseException catch (e, stackTrace) {
       return left(Failure(

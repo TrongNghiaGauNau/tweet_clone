@@ -10,10 +10,12 @@ import 'package:twitter_clone_2/core/presentation/common/common_loading.dart';
 import 'package:twitter_clone_2/core/presentation/common/loading_page.dart';
 import 'package:twitter_clone_2/core/presentation/common/rounded_medium_button.dart';
 import 'package:twitter_clone_2/core/presentation/extension/context_extesion.dart';
+import 'package:twitter_clone_2/core/presentation/extension/list_extension.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
 import 'package:twitter_clone_2/theme/pallete.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
 import 'package:twitter_clone_2/tweet/presentation/views/tweet_detail.dart';
+import 'package:twitter_clone_2/tweet/presentation/widgets/tweet_card.dart';
 import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart';
 import 'package:twitter_clone_2/user_profile/presentation/views/update_profile_screen.dart';
 import 'package:twitter_clone_2/user_profile/presentation/widgets/follow_count.dart';
@@ -33,8 +35,13 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
     final currentUser = ref.watch(userDetailsProvider(currentUID ?? '')).value;
     final itemSize = useMemoized(() =>
         context.calculateItemSize(numberOfItems: 3, padding: 0, spacing: 6));
-    final tweetsWithImages =
-        userTweet.where((tweet) => tweet.imagesLink.isNotEmpty);
+    final itemHeightSize = useMemoized(() =>
+        context.calculateItemSize(numberOfItems: 3, padding: 0, spacing: 0));
+    final tweetsList = useMemoized(
+        () => userTweet.splitMatch((tweet) => tweet.imagesLink.isNotEmpty),
+        [userTweet]);
+    final tweetsWithImages = tweetsList.matched;
+    final tweetsNoImages = tweetsList.unmatched;
     final changedBannerPic = useState<File?>(null);
     final isChangeBanner = useState(false);
 
@@ -54,6 +61,10 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
         changedBannerPic.value = null;
         isChangeBanner.value = false;
       });
+    }
+
+    double getImageTweetsHeight(int numImages) {
+      return itemHeightSize * (numImages <= 3 ? 1 : (numImages - 2) % 3 + 1);
     }
 
     return user == null
@@ -231,48 +242,90 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
                 ),
                 const SizedBox(height: 5),
                 const Divider(color: Pallete.whiteColor),
-                Wrap(
-                  alignment: WrapAlignment.start,
-                  spacing: 6.0,
-                  runSpacing: 6.0,
-                  children: tweetsWithImages.mapWithIndex((tweet, index) {
-                    return GestureDetector(
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            TwitterDetailScreen(tweetId: tweet.id),
-                      )),
-                      child: SizedBox(
-                        width: itemSize,
-                        height: itemSize,
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: Image.network(
-                                tweet.imagesLink[0],
-                                fit: BoxFit.cover,
-                                loadingBuilder: (context, child,
-                                        loadingProgress) =>
-                                    loadingProgress == null
-                                        ? child
-                                        : const Padding(
-                                            padding: EdgeInsets.all(20),
-                                            child: CircularProgressIndicator(),
-                                          ),
-                              ),
-                            ),
-                            if (tweet.imagesLink.length > 1)
-                              const Positioned(
-                                  top: 2,
-                                  right: 5,
-                                  child: Icon(Icons.file_copy_rounded))
-                          ],
-                        ),
+                const TabBar(
+                  indicatorColor: Pallete.blueColor,
+                  tabs: [
+                    Tab(
+                      icon: Icon(Icons.image),
+                    ),
+                    Tab(
+                      icon: Icon(Icons.app_registration_rounded),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: getImageTweetsHeight(tweetsWithImages.length),
+                  child: TabBarView(
+                    children: [
+                      ImageTweets(
+                          tweetsWithImages: tweetsWithImages,
+                          context: context,
+                          itemSize: itemSize),
+                      ListView.builder(
+                        itemCount: tweetsNoImages.length,
+                        itemBuilder: (context, index) {
+                          return TweetCard(tweetData: tweetsNoImages[index]);
+                        },
                       ),
-                    );
-                  }).toList(),
+                    ],
+                  ),
                 ),
               ],
             ),
           );
+  }
+}
+
+class ImageTweets extends HookWidget {
+  const ImageTweets({
+    super.key,
+    required this.tweetsWithImages,
+    required this.context,
+    required this.itemSize,
+  });
+
+  final Iterable<Tweet> tweetsWithImages;
+  final BuildContext context;
+  final double itemSize;
+
+  @override
+  Widget build(BuildContext context) {
+    useAutomaticKeepAlive();
+    return Wrap(
+      alignment: WrapAlignment.start,
+      spacing: 6.0,
+      runSpacing: 6.0,
+      children: tweetsWithImages.mapWithIndex((tweet, index) {
+        return GestureDetector(
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => TwitterDetailScreen(tweetId: tweet.id),
+          )),
+          child: SizedBox(
+            width: itemSize,
+            height: itemSize,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.network(
+                    tweet.imagesLink[0],
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) =>
+                        loadingProgress == null
+                            ? child
+                            : const Padding(
+                                padding: EdgeInsets.all(20),
+                                child: CircularProgressIndicator(),
+                              ),
+                  ),
+                ),
+                if (tweet.imagesLink.length > 1)
+                  const Positioned(
+                      top: 2, right: 5, child: Icon(Icons.file_copy_rounded))
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 }

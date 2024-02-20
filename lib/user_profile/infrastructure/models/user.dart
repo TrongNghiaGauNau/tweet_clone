@@ -16,6 +16,8 @@ class User with _$User {
     required String uid,
     required String bio,
     required bool isTwitterBlue,
+    required String lastActive,
+    required bool isOnline,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

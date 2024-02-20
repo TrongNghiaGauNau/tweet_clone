@@ -29,6 +29,8 @@ mixin _$User {
   String get uid => throw _privateConstructorUsedError;
   String get bio => throw _privateConstructorUsedError;
   bool get isTwitterBlue => throw _privateConstructorUsedError;
+  String get lastActive => throw _privateConstructorUsedError;
+  bool get isOnline => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -49,7 +51,9 @@ abstract class $UserCopyWith<$Res> {
       String bannerPic,
       String uid,
       String bio,
-      bool isTwitterBlue});
+      bool isTwitterBlue,
+      String lastActive,
+      bool isOnline});
 }
 
 /// @nodoc
@@ -74,6 +78,8 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? uid = null,
     Object? bio = null,
     Object? isTwitterBlue = null,
+    Object? lastActive = null,
+    Object? isOnline = null,
   }) {
     return _then(_value.copyWith(
       email: null == email
@@ -112,6 +118,14 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.isTwitterBlue
           : isTwitterBlue // ignore: cast_nullable_to_non_nullable
               as bool,
+      lastActive: null == lastActive
+          ? _value.lastActive
+          : lastActive // ignore: cast_nullable_to_non_nullable
+              as String,
+      isOnline: null == isOnline
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -132,7 +146,9 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       String bannerPic,
       String uid,
       String bio,
-      bool isTwitterBlue});
+      bool isTwitterBlue,
+      String lastActive,
+      bool isOnline});
 }
 
 /// @nodoc
@@ -154,6 +170,8 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? uid = null,
     Object? bio = null,
     Object? isTwitterBlue = null,
+    Object? lastActive = null,
+    Object? isOnline = null,
   }) {
     return _then(_$UserImpl(
       email: null == email
@@ -192,6 +210,14 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.isTwitterBlue
           : isTwitterBlue // ignore: cast_nullable_to_non_nullable
               as bool,
+      lastActive: null == lastActive
+          ? _value.lastActive
+          : lastActive // ignore: cast_nullable_to_non_nullable
+              as String,
+      isOnline: null == isOnline
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -208,7 +234,9 @@ class _$UserImpl implements _User {
       required this.bannerPic,
       required this.uid,
       required this.bio,
-      required this.isTwitterBlue})
+      required this.isTwitterBlue,
+      required this.lastActive,
+      required this.isOnline})
       : _followers = followers,
         _following = following;
 
@@ -245,10 +273,14 @@ class _$UserImpl implements _User {
   final String bio;
   @override
   final bool isTwitterBlue;
+  @override
+  final String lastActive;
+  @override
+  final bool isOnline;
 
   @override
   String toString() {
-    return 'User(email: $email, name: $name, followers: $followers, following: $following, profilePic: $profilePic, bannerPic: $bannerPic, uid: $uid, bio: $bio, isTwitterBlue: $isTwitterBlue)';
+    return 'User(email: $email, name: $name, followers: $followers, following: $following, profilePic: $profilePic, bannerPic: $bannerPic, uid: $uid, bio: $bio, isTwitterBlue: $isTwitterBlue, lastActive: $lastActive, isOnline: $isOnline)';
   }
 
   @override
@@ -269,7 +301,11 @@ class _$UserImpl implements _User {
             (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.bio, bio) || other.bio == bio) &&
             (identical(other.isTwitterBlue, isTwitterBlue) ||
-                other.isTwitterBlue == isTwitterBlue));
+                other.isTwitterBlue == isTwitterBlue) &&
+            (identical(other.lastActive, lastActive) ||
+                other.lastActive == lastActive) &&
+            (identical(other.isOnline, isOnline) ||
+                other.isOnline == isOnline));
   }
 
   @JsonKey(ignore: true)
@@ -284,7 +320,9 @@ class _$UserImpl implements _User {
       bannerPic,
       uid,
       bio,
-      isTwitterBlue);
+      isTwitterBlue,
+      lastActive,
+      isOnline);
 
   @JsonKey(ignore: true)
   @override
@@ -310,7 +348,9 @@ abstract class _User implements User {
       required final String bannerPic,
       required final String uid,
       required final String bio,
-      required final bool isTwitterBlue}) = _$UserImpl;
+      required final bool isTwitterBlue,
+      required final String lastActive,
+      required final bool isOnline}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -332,6 +372,10 @@ abstract class _User implements User {
   String get bio;
   @override
   bool get isTwitterBlue;
+  @override
+  String get lastActive;
+  @override
+  bool get isOnline;
   @override
   @JsonKey(ignore: true)
   _$$UserImplCopyWith<_$UserImpl> get copyWith =>

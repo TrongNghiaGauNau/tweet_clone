@@ -20,22 +20,25 @@ class ProfileScreen extends HookConsumerWidget {
       return null;
     }, [uid]);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
-      body: user.when(
-        init: () => const Center(
-          child: Text('Can not get user information'),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Profile'),
         ),
-        data: (userData, tweetsData) {
-          return ProfileBody(
-            user: userData,
-            userTweet: tweetsData,
-          );
-        },
-        error: () => const ErrorText(error: 'Can not get user information'),
-        loading: () => const Loader(),
+        body: user.when(
+          init: () => const Center(
+            child: Text('Can not get user information'),
+          ),
+          data: (userData, tweetsData) {
+            return ProfileBody(
+              user: userData,
+              userTweet: tweetsData,
+            );
+          },
+          error: () => const ErrorText(error: 'Can not get user information'),
+          loading: () => const Loader(),
+        ),
       ),
     );
   }

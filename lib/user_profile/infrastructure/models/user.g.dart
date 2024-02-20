@@ -18,6 +18,8 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       uid: json['uid'] as String,
       bio: json['bio'] as String,
       isTwitterBlue: json['isTwitterBlue'] as bool,
+      lastActive: json['lastActive'] as String,
+      isOnline: json['isOnline'] as bool,
     );
 
 Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
@@ -31,4 +33,6 @@ Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
       'uid': instance.uid,
       'bio': instance.bio,
       'isTwitterBlue': instance.isTwitterBlue,
+      'lastActive': instance.lastActive,
+      'isOnline': instance.isOnline,
     };
