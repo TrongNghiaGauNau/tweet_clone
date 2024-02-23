@@ -12,6 +12,7 @@ class Message with _$Message {
     required String senderId,
     required String message,
     required String sentAt,
+    @Default(false) bool seen,
     required MessageType messageType,
   }) = _Message;
 

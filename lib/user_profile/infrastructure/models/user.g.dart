@@ -20,6 +20,7 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       isTwitterBlue: json['isTwitterBlue'] as bool,
       lastActive: json['lastActive'] as String,
       isOnline: json['isOnline'] as bool,
+      fcmToken: json['fcmToken'] as String?,
     );
 
 Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
@@ -35,4 +36,5 @@ Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
       'isTwitterBlue': instance.isTwitterBlue,
       'lastActive': instance.lastActive,
       'isOnline': instance.isOnline,
+      'fcmToken': instance.fcmToken,
     };

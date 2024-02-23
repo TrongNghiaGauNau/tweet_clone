@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:twitter_clone_2/auth/shared/providers.dart';
-import 'package:twitter_clone_2/chat/infrastructure/models/message.dart';
-import 'package:twitter_clone_2/chat/presentation/views/detail_chat_screen.dart';
+import 'package:twitter_clone_2/chat/presentation/widgets/chat_tile.dart';
 import 'package:twitter_clone_2/chat/shared/providers.dart';
-import 'package:twitter_clone_2/core/application/const.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
-import 'package:twitter_clone_2/user_profile/infrastructure/models/user_ui/user_ui.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class ChatScreen extends HookConsumerWidget {
   const ChatScreen({super.key});
@@ -15,11 +11,9 @@ class ChatScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUid = ref.watch(firebaseAuthProvider).currentUser?.uid;
-    final streamUsers = ref.watch(
-        userRepositoryProvider.select((value) => value.getAllUserDemo()));
-
-    List<UserUI> listChatUsers = [];
-
+    final streamUsers =
+        ref.watch(messageDetailNotifierProvider.notifier).getAllChatUsers();
+    final chatList = ref.watch(messageDetailNotifierProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat Screen'),
@@ -31,100 +25,72 @@ class ChatScreen extends HookConsumerWidget {
                 return Future.delayed(const Duration(seconds: 1));
               },
               child: StreamBuilder(
-                stream: streamUsers.snapshots(),
+                stream: streamUsers,
                 builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                    case ConnectionState.none:
-                      return const Center(child: CircularProgressIndicator());
+                  if (snapshot.hasData) {
+                    final listChatUsers =
+                        snapshot.data?.docs.map((e) => e.id).toList() ?? [];
+                    if (listChatUsers.isEmpty) {
+                      return const Center(
+                          child: Text('Start chatting with someone'));
+                    }
 
-                    case ConnectionState.active:
-                    case ConnectionState.done:
-                      final data = snapshot.data?.docs;
-                      listChatUsers = data
-                              ?.map((e) => UserUI.fromJson(
-                                  e.data() as Map<String, dynamic>))
-                              .toList() ??
-                          [];
+                    return HookBuilder(builder: (context) {
+                      useEffect(() {
+                        Future(() => ref
+                            .read(messageDetailNotifierProvider.notifier)
+                            .getAllChat(listChatUsers));
+                        return null;
+                      }, []);
+
+                      return chatList.when(
+                          init: () => const Center(
+                              child: Text('Start chatting with someone')),
+                          data: (chatList) {
+                            return ListView.builder(
+                              itemCount: chatList.length,
+                              itemBuilder: (context, index) {
+                                return ChatTile(
+                                    user: chatList[index],
+                                    currentUid: currentUid);
+                              },
+                            );
+                          },
+                          error: () => const Center(
+                              child: Text(
+                                  'Error happended when trying to get chat list')),
+                          empty: () => const Center(
+                              child: Text('There is no one u have contacted')),
+                          loading: () =>
+                              const Center(child: CircularProgressIndicator()));
+                    });
+                    // return StreamBuilder(
+                    //   stream: streamChatList,
+                    //   builder: (context, snapshot) {
+                    //     final List<User>? listChat =
+                    //         snapshot.data?.docs.map((e) {
+                    //       return User.fromJson(e.data());
+                    //     }).toList();
+                    //     debugPrint('hehe listChat: $listChat');
+                    //     if (listChat == null) {
+                    //       return const Center(
+                    //           child: Text('Start chatting with someone'));
+                    //     }
+                    //     return ListView.builder(
+                    //       itemCount: listChat.length,
+                    //       itemBuilder: (context, index) {
+                    //         return ChatTile(
+                    //             user: listChat[index], currentUid: currentUid);
+                    //       },
+                    //     );
+                    //   },
+                    // );
                   }
-                  if (listChatUsers.isEmpty) {
-                    return const Center(
-                        child: Text('No one yet you have sent message'));
-                  }
-                  return ListView.builder(
-                    itemCount: listChatUsers.length,
-                    itemBuilder: (context, index) {
-                      return ChatTile(
-                          userUI: listChatUsers[index], currentUid: currentUid);
-                    },
-                  );
+                  return const Center(
+                      child: Text('No one yet you have sent message'));
                 },
               ),
             ),
     );
-  }
-}
-
-class ChatTile extends ConsumerWidget {
-  const ChatTile({super.key, required this.userUI, required this.currentUid});
-
-  final UserUI userUI;
-  final String currentUid;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // final messageId = '${currentUid}_${userUI.uid}';
-    final messageId = '${userUI.uid}_$currentUid';
-    // debugPrint('hehe: $messageId');
-    final stream = ref
-        .watch(messageDetailNotifierProvider.notifier)
-        .getLastMessage(userUI.uid, messageId);
-    Message? message;
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                DetailChatScreen(userUI: userUI, currentUid: currentUid)));
-      },
-      child: StreamBuilder(
-        stream: stream,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-            case ConnectionState.none:
-              return const Center(child: CircularProgressIndicator());
-
-            case ConnectionState.active:
-            case ConnectionState.done:
-              final data = snapshot.data?.docs;
-              final messagesList =
-                  data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
-              if (messagesList.isNotEmpty) {
-                message = messagesList[0];
-              }
-              return Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                child: ListTile(
-                  leading: CircleAvatar(
-                      backgroundImage: NetworkImage(userUI.profilePic == ''
-                          ? defaultAvatar
-                          : userUI.profilePic)),
-                  title: Text(userUI.name),
-                  subtitle: message == null ? null : Text(message!.message),
-                  trailing: message == null
-                      ? null
-                      : Text(
-                          timeago.format(DateTime.parse(message!.sentAt),
-                              locale: 'en_short'),
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                ),
-              );
-          }
-        },
-      ),
-    );
-    ;
   }
 }

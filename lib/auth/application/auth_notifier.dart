@@ -39,6 +39,7 @@ class AuthController extends StateNotifier<AuthState> {
           isTwitterBlue: false,
           isOnline: false,
           lastActive: '',
+          fcmToken: '',
         );
         final res = await _userRepsitory.saveUserData(user, uid);
         res.fold((l) => showSnackbar(context, l.messsage), (r) {

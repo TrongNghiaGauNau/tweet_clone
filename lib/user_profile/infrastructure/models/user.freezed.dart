@@ -31,6 +31,7 @@ mixin _$User {
   bool get isTwitterBlue => throw _privateConstructorUsedError;
   String get lastActive => throw _privateConstructorUsedError;
   bool get isOnline => throw _privateConstructorUsedError;
+  String? get fcmToken => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -53,7 +54,8 @@ abstract class $UserCopyWith<$Res> {
       String bio,
       bool isTwitterBlue,
       String lastActive,
-      bool isOnline});
+      bool isOnline,
+      String? fcmToken});
 }
 
 /// @nodoc
@@ -80,6 +82,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? isTwitterBlue = null,
     Object? lastActive = null,
     Object? isOnline = null,
+    Object? fcmToken = freezed,
   }) {
     return _then(_value.copyWith(
       email: null == email
@@ -126,6 +129,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.isOnline
           : isOnline // ignore: cast_nullable_to_non_nullable
               as bool,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -148,7 +155,8 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       String bio,
       bool isTwitterBlue,
       String lastActive,
-      bool isOnline});
+      bool isOnline,
+      String? fcmToken});
 }
 
 /// @nodoc
@@ -172,6 +180,7 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? isTwitterBlue = null,
     Object? lastActive = null,
     Object? isOnline = null,
+    Object? fcmToken = freezed,
   }) {
     return _then(_$UserImpl(
       email: null == email
@@ -218,6 +227,10 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.isOnline
           : isOnline // ignore: cast_nullable_to_non_nullable
               as bool,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -236,7 +249,8 @@ class _$UserImpl implements _User {
       required this.bio,
       required this.isTwitterBlue,
       required this.lastActive,
-      required this.isOnline})
+      required this.isOnline,
+      required this.fcmToken})
       : _followers = followers,
         _following = following;
 
@@ -277,10 +291,12 @@ class _$UserImpl implements _User {
   final String lastActive;
   @override
   final bool isOnline;
+  @override
+  final String? fcmToken;
 
   @override
   String toString() {
-    return 'User(email: $email, name: $name, followers: $followers, following: $following, profilePic: $profilePic, bannerPic: $bannerPic, uid: $uid, bio: $bio, isTwitterBlue: $isTwitterBlue, lastActive: $lastActive, isOnline: $isOnline)';
+    return 'User(email: $email, name: $name, followers: $followers, following: $following, profilePic: $profilePic, bannerPic: $bannerPic, uid: $uid, bio: $bio, isTwitterBlue: $isTwitterBlue, lastActive: $lastActive, isOnline: $isOnline, fcmToken: $fcmToken)';
   }
 
   @override
@@ -305,7 +321,9 @@ class _$UserImpl implements _User {
             (identical(other.lastActive, lastActive) ||
                 other.lastActive == lastActive) &&
             (identical(other.isOnline, isOnline) ||
-                other.isOnline == isOnline));
+                other.isOnline == isOnline) &&
+            (identical(other.fcmToken, fcmToken) ||
+                other.fcmToken == fcmToken));
   }
 
   @JsonKey(ignore: true)
@@ -322,7 +340,8 @@ class _$UserImpl implements _User {
       bio,
       isTwitterBlue,
       lastActive,
-      isOnline);
+      isOnline,
+      fcmToken);
 
   @JsonKey(ignore: true)
   @override
@@ -350,7 +369,8 @@ abstract class _User implements User {
       required final String bio,
       required final bool isTwitterBlue,
       required final String lastActive,
-      required final bool isOnline}) = _$UserImpl;
+      required final bool isOnline,
+      required final String? fcmToken}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -376,6 +396,8 @@ abstract class _User implements User {
   String get lastActive;
   @override
   bool get isOnline;
+  @override
+  String? get fcmToken;
   @override
   @JsonKey(ignore: true)
   _$$UserImplCopyWith<_$UserImpl> get copyWith =>

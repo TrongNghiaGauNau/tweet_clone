@@ -1,236 +1,278 @@
-// import 'dart:convert';
-// import 'package:awesome_notifications/awesome_notifications.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:dio/dio.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:hehe/notifications/presentation/views/notification_view.dart';
-// import 'package:hehe/theme/pallete.dart';
+import 'dart:convert';
 
-// class NotificationRepository {
-//   static const key =
-//       'AAAA4V_Whow:APA91bGDyUqBMC2MhNiAUnAOSoApLrJpCgWKPfx4kDGb-ZT2vCAtGyBbgtSgph40Cm_lB-wVdEN45wZPb-WDNJqH5a3pbK45951YFlgualZNyyjdkZaf8W5VKFY2tFlHr_EnJcby60FU';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:twitter_clone_2/auth/application/authenticator.dart';
 
-//   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-//   final dio = Dio();
+class PushNotificationRepository {
+  final _key =
+      'AAAA4V_Whow:APA91bGDyUqBMC2MhNiAUnAOSoApLrJpCgWKPfx4kDGb-ZT2vCAtGyBbgtSgph40Cm_lB-wVdEN45wZPb-WDNJqH5a3pbK45951YFlgualZNyyjdkZaf8W5VKFY2tFlHr_EnJcby60FU';
+  final _endPoint = 'https://fcm.googleapis.com/fcm/send';
+  final _dio = Dio();
+  final _userRepo = FirebaseFirestore.instance.collection('users');
+  final _authenticator = Authenticator();
 
-//   //-------------------------------------------------------------------------------------------------------------
-//   Future startListenToFirebase() async {
-//     await initializeLocalNotifications();
-//     FirebaseMessaging.onMessage.listen(_firebaseMessagingForegroundHandler);
-//     await addListener();
-//   }
+  final _fcm = FirebaseMessaging.instance;
 
-//   //Hàm lắng nghe sự kiện trên firebase sau đó gửi push noti khi app ở foreground
-//   void _firebaseMessagingForegroundHandler(RemoteMessage message) async {
-//     await createNotification(
-//         title: message.notification?.title ?? 'Title',
-//         body: message.notification?.body ?? 'Content');
-//   }
+  Future<void> getFirebaseMessagingToken() async {
+    await _fcm.requestPermission();
 
-//   Future<bool> addListener() async {
-//     return AwesomeNotifications().setListeners(
-//       onActionReceivedMethod: _onActionReceivedMethod,
-//       onNotificationCreatedMethod: null,
-//       onNotificationDisplayedMethod: null,
-//       onDismissActionReceivedMethod: null,
-//     );
-//   }
+    await _fcm.getToken().then((token) {
+      if (token != null) {
+        //update the user token
+        final currentUid = _authenticator.currentUser?.uid;
+        if (currentUid != null) {
+          _userRepo.doc(currentUid).update({'fcmToken': token});
+        }
+      }
+    });
+  }
 
-//   //under functions is using awesome_notification
-//   Future<void> initializeLocalNotifications() async {
-//     await AwesomeNotifications().initialize(
-//         null,
-//         [
-//           NotificationChannel(
-//               importance: NotificationImportance.Max,
-//               channelGroupKey: 'basic_channel_group',
-//               channelKey: 'default_notification_channel_id',
-//               channelName: 'Chat notifications',
-//               channelDescription: 'Notification channel for chatting',
-//               defaultColor: Pallete.blueColor,
-//               channelShowBadge: true,
-//               ledColor: Colors.white)
-//         ],
-//         channelGroups: [
-//           NotificationChannelGroup(
-//               channelGroupKey: 'basic_channel_group',
-//               channelGroupName: 'Basic Notification Group')
-//         ],
-//         debug: kDebugMode);
-//   }
+  Future<void> sendNotification(
+      {required String senderName,
+      // required String senderId,
+      required String bodyMessage,
+      required String receiverToken}) async {
+    try {
+      await _dio.post(_endPoint,
+          data: jsonEncode(<String, dynamic>{
+            "to": receiverToken,
+            'priority': 'high',
+            'notification': <String, dynamic>{
+              'body': bodyMessage,
+              'title': senderName,
+            },
+            // 'data': <String, String>{
+            //   'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+            //   'status': 'done',
+            //   'senderId': senderId,
+            // },
+          }),
+          options: Options(headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'key=$_key'
+          }));
+    } catch (e) {
+      debugPrint('notification_repo: $e');
+    }
+  }
 
-//   Future<void> checkPermission() async {
-//     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
-//     if (!isAllowed) {
-//       await AwesomeNotifications().requestPermissionToSendNotifications();
-//     }
-//   }
+  //-------------------------------------------------------------------------------------------------------------
+  // Future startListenToFirebase() async {
+  //   await initializeLocalNotifications();
+  //   FirebaseMessaging.onMessage.listen(_firebaseMessagingForegroundHandler);
+  //   await addListener();
+  // }
 
-//   // Hàm gọi Local notification khi nhấn nút Send notification trên ứng dụng
-//   Future<void> createNotification(
-//       {required String title, required String body}) async {
-//     await AwesomeNotifications().createNotification(
-//       content: NotificationContent(
-//         id: DateTime.now().microsecond,
-//         channelKey: 'default_notification_channel_id',
-//         category: NotificationCategory.Message,
-//         notificationLayout: NotificationLayout.Messaging,
-//         // groupKey: '$chatChannelId',
-//         title: title,
-//         // badge: BadgeModel.fromNotification(this).total,
-//         body: body,
-//         wakeUpScreen: true,
-//       ),
-//     );
-//   }
+  // //Hàm lắng nghe sự kiện trên firebase sau đó gửi push noti khi app ở foreground
+  // void _firebaseMessagingForegroundHandler(RemoteMessage message) async {
+  //   await createNotification(
+  //       title: message.notification?.title ?? 'Title',
+  //       body: message.notification?.body ?? 'Content');
+  // }
 
-//   Future clearAllNotificationWhenLogout() async {
-//     AwesomeNotifications().dismissAllNotifications();
-//     // Eraser.clearAllAppNotifications();
-//     // messaging.deleteToken();
-//   }
+  // Future<bool> addListener() async {
+  //   return AwesomeNotifications().setListeners(
+  //     onActionReceivedMethod: _onActionReceivedMethod,
+  //     onNotificationCreatedMethod: null,
+  //     onNotificationDisplayedMethod: null,
+  //     onDismissActionReceivedMethod: null,
+  //   );
+  // }
 
-//   //Hàm dùng để xử lý sự kiện khi click vào push noti khi app ở foreground
-//   @pragma('vm:entry-point')
-//   Future<void> _onActionReceivedMethod(ReceivedAction event) async {
-//     //có thể cho navigate qua trang có sự kiện thông báo
-//     //vd qua trang tin nhắn, tweet
-//   }
+  // //under functions is using awesome_notification
+  // Future<void> initializeLocalNotifications() async {
+  //   await AwesomeNotifications().initialize(
+  //       null,
+  //       [
+  //         NotificationChannel(
+  //             importance: NotificationImportance.Max,
+  //             channelGroupKey: 'basic_channel_group',
+  //             channelKey: 'default_notification_channel_id',
+  //             channelName: 'Chat notifications',
+  //             channelDescription: 'Notification channel for chatting',
+  //             defaultColor: Pallete.blueColor,
+  //             channelShowBadge: true,
+  //             ledColor: Colors.white)
+  //       ],
+  //       channelGroups: [
+  //         NotificationChannelGroup(
+  //             channelGroupKey: 'basic_channel_group',
+  //             channelGroupName: 'Basic Notification Group')
+  //       ],
+  //       debug: kDebugMode);
+  // }
 
-//   //Hàm gửi push noti khi app ở background
-//   @pragma('vm:entry-point')
-//   Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//     await initializeLocalNotifications();
-//     await createNotification(
-//         title: message.notification?.title ?? 'Title from backgroumd',
-//         body: message.notification?.body ?? 'Content from background');
-//   }
+  // Future<void> checkPermission() async {
+  //   bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+  //   if (!isAllowed) {
+  //     await AwesomeNotifications().requestPermissionToSendNotifications();
+  //   }
+  // }
 
-//   //-------------------------------------------------------------------------------------------------------------
-//   //under functions is using flutter_local_notification
+  // // Hàm gọi Local notification khi nhấn nút Send notification trên ứng dụng
+  // Future<void> createNotification(
+  //     {required String title, required String body}) async {
+  //   await AwesomeNotifications().createNotification(
+  //     content: NotificationContent(
+  //       id: DateTime.now().microsecond,
+  //       channelKey: 'default_notification_channel_id',
+  //       category: NotificationCategory.Message,
+  //       notificationLayout: NotificationLayout.Messaging,
+  //       // groupKey: '$chatChannelId',
+  //       title: title,
+  //       // badge: BadgeModel.fromNotification(this).total,
+  //       body: body,
+  //       wakeUpScreen: true,
+  //     ),
+  //   );
+  // }
 
-//   void _innitLocalNotification() {
-//     const androidSettings =
-//         AndroidInitializationSettings('@mipmap/ic_launcher');
+  // Future clearAllNotificationWhenLogout() async {
+  //   AwesomeNotifications().dismissAllNotifications();
+  //   // Eraser.clearAllAppNotifications();
+  //   // messaging.deleteToken();
+  // }
 
-//     const initializationSettings =
-//         InitializationSettings(android: androidSettings);
-//     flutterLocalNotificationsPlugin.initialize(
-//       initializationSettings,
-//       onDidReceiveNotificationResponse: (response) {
-//         debugPrint(response.payload.toString());
-//       },
-//     );
-//   }
+  // //Hàm dùng để xử lý sự kiện khi click vào push noti khi app ở foreground
+  // @pragma('vm:entry-point')
+  // Future<void> _onActionReceivedMethod(ReceivedAction event) async {
+  //   //có thể cho navigate qua trang có sự kiện thông báo
+  //   //vd qua trang tin nhắn, tweet
+  // }
 
-//   Future<void> _showLocalNotification(RemoteMessage message) async {
-//     final styleInformation = BigTextStyleInformation(
-//         message.notification?.body.toString() ?? 'body message',
-//         htmlFormatBigText: true,
-//         contentTitle: message.notification?.title ?? 'title message',
-//         htmlFormatContentTitle: true);
-//     final androidDetails = AndroidNotificationDetails(
-//         'com.example.hehe.urgent', 'mychannelid',
-//         importance: Importance.max,
-//         styleInformation: styleInformation,
-//         priority: Priority.max);
-//     final notificationDetails = NotificationDetails(android: androidDetails);
-//     await flutterLocalNotificationsPlugin.show(
-//         0,
-//         message.notification?.title ?? 'title ',
-//         message.notification?.body ?? 'body',
-//         notificationDetails,
-//         payload: message.data['body']);
-//   }
+  // //Hàm gửi push noti khi app ở background
+  // @pragma('vm:entry-point')
+  // Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  //   await initializeLocalNotifications();
+  //   await createNotification(
+  //       title: message.notification?.title ?? 'Title from backgroumd',
+  //       body: message.notification?.body ?? 'Content from background');
+  // }
 
-//   //request user permision to show push notification
-//   Future<void> requestPermission() async {
-//     final messaging = FirebaseMessaging.instance;
+  // //-------------------------------------------------------------------------------------------------------------
+  // //under functions is using flutter_local_notification
 
-//     final settings = await messaging.requestPermission(
-//       alert: true,
-//       announcement: false,
-//       badge: true,
-//       carPlay: false,
-//       criticalAlert: false,
-//       provisional: false,
-//       sound: true,
-//     );
+  // void _innitLocalNotification() {
+  //   const androidSettings =
+  //       AndroidInitializationSettings('@mipmap/ic_launcher');
 
-//     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-//       debugPrint('User granted permission');
-//     } else if (settings.authorizationStatus ==
-//         AuthorizationStatus.provisional) {
-//       debugPrint('User granted provisional permission');
-//     }
-//   }
+  //   const initializationSettings =
+  //       InitializationSettings(android: androidSettings);
+  //   flutterLocalNotificationsPlugin.initialize(
+  //     initializationSettings,
+  //     onDidReceiveNotificationResponse: (response) {
+  //       debugPrint(response.payload.toString());
+  //     },
+  //   );
+  // }
 
-//   //get device token to show push noti
-//   Future<void> getToken() async {
-//     final token = await FirebaseMessaging.instance.getToken();
+  // Future<void> _showLocalNotification(RemoteMessage message) async {
+  //   final styleInformation = BigTextStyleInformation(
+  //       message.notification?.body.toString() ?? 'body message',
+  //       htmlFormatBigText: true,
+  //       contentTitle: message.notification?.title ?? 'title message',
+  //       htmlFormatContentTitle: true);
+  //   final androidDetails = AndroidNotificationDetails(
+  //       'com.example.hehe.urgent', 'mychannelid',
+  //       importance: Importance.max,
+  //       styleInformation: styleInformation,
+  //       priority: Priority.max);
+  //   final notificationDetails = NotificationDetails(android: androidDetails);
+  //   await flutterLocalNotificationsPlugin.show(
+  //       0,
+  //       message.notification?.title ?? 'title ',
+  //       message.notification?.body ?? 'body',
+  //       notificationDetails,
+  //       payload: message.data['body']);
+  // }
 
-//     await FirebaseFirestore.instance
-//         .collection('users')
-//         .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
-//         .set({'token': token}, SetOptions(merge: true));
-//   }
+  // //request user permision to show push notification
+  // Future<void> requestPermission() async {
+  //   final messaging = FirebaseMessaging.instance;
 
-//   //get receiver token for later to show push noti on their device
-//   String receiverToken = '';
-//   Future<void> getReceiverToken(String? receiverId) async {
-//     final getToken = await FirebaseFirestore.instance
-//         .collection('users')
-//         .doc(receiverId)
-//         .get();
+  //   final settings = await messaging.requestPermission(
+  //     alert: true,
+  //     announcement: false,
+  //     badge: true,
+  //     carPlay: false,
+  //     criticalAlert: false,
+  //     provisional: false,
+  //     sound: true,
+  //   );
 
-//     receiverToken = await getToken.data()?['token'];
-//   }
+  //   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+  //     debugPrint('User granted permission');
+  //   } else if (settings.authorizationStatus ==
+  //       AuthorizationStatus.provisional) {
+  //     debugPrint('User granted provisional permission');
+  //   }
+  // }
 
-//   //intialize this function to start get push notification from app
-//   void firebaseNotification(context) {
-//     _innitLocalNotification();
+  // //get device token to show push noti
+  // Future<void> getToken() async {
+  //   final token = await FirebaseMessaging.instance.getToken();
 
-//     //background
-//     FirebaseMessaging.onMessageOpenedApp.listen((message) async {
-//       await Navigator.of(context).push(MaterialPageRoute(
-//         builder: (_) => const NotificationView(),
-//       ));
-//     });
+  //   await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
+  //       .set({'token': token}, SetOptions(merge: true));
+  // }
 
-//     //foreground
-//     FirebaseMessaging.onMessage.listen((message) async {
-//       await _showLocalNotification(message);
-//     });
-//   }
+  // //get receiver token for later to show push noti on their device
+  // String receiverToken = '';
+  // Future<void> getReceiverToken(String? receiverId) async {
+  //   final getToken = await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(receiverId)
+  //       .get();
 
-//   //use this to send new data to FCM to show push noti on other device
-//   Future<void> sendNotification(
-//       {required String body, required String senderId}) async {
-//     try {
-//       await dio.post('https://fcm.googleapis.com/fcm/send',
-//           data: jsonEncode(<String, dynamic>{
-//             "to": receiverToken,
-//             'priority': 'high',
-//             'notification': <String, dynamic>{
-//               'body': body,
-//               'title': 'New Message !',
-//             },
-//             'data': <String, String>{
-//               'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-//               'status': 'done',
-//               'senderId': senderId,
-//             },
-//           }),
-//           options: Options(headers: <String, String>{
-//             'Content-Type': 'application/json',
-//             'Authorization': 'key=$key'
-//           }));
-//     } catch (e) {
-//       debugPrint('notification_repo: $e');
-//     }
-//   }
-// }
+  //   receiverToken = await getToken.data()?['token'];
+  // }
+
+  // //intialize this function to start get push notification from app
+  // void firebaseNotification(context) {
+  //   _innitLocalNotification();
+
+  //   //background
+  //   FirebaseMessaging.onMessageOpenedApp.listen((message) async {
+  //     await Navigator.of(context).push(MaterialPageRoute(
+  //       builder: (_) => const NotificationView(),
+  //     ));
+  //   });
+
+  //   //foreground
+  //   FirebaseMessaging.onMessage.listen((message) async {
+  //     await _showLocalNotification(message);
+  //   });
+  // }
+
+  // //use this to send new data to FCM to show push noti on other device
+  // Future<void> sendNotification(
+  //     {required String body, required String senderId}) async {
+  //   try {
+  //     await dio.post('https://fcm.googleapis.com/fcm/send',
+  //         data: jsonEncode(<String, dynamic>{
+  //           "to": receiverToken,
+  //           'priority': 'high',
+  //           'notification': <String, dynamic>{
+  //             'body': body,
+  //             'title': 'New Message !',
+  //           },
+  //           'data': <String, String>{
+  //             'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+  //             'status': 'done',
+  //             'senderId': senderId,
+  //           },
+  //         }),
+  //         options: Options(headers: <String, String>{
+  //           'Content-Type': 'application/json',
+  //           'Authorization': 'key=$key'
+  //         }));
+  //   } catch (e) {
+  //     debugPrint('notification_repo: $e');
+  //   }
+  // }
+}

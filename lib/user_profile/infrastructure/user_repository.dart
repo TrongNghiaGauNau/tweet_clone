@@ -13,10 +13,6 @@ class UserRepsitory {
   final _userUIRepo = FirebaseFirestore.instance.collection('users_ui');
   final _tweetRepo = FirebaseFirestore.instance.collectionGroup('tweets');
 
-  CollectionReference getAllUserDemo() {
-    return _userUIRepo;
-  }
-
   FutureEitherVoid saveUserData(model.User user, String uid) async {
     try {
       await _firebaseFirestore.doc(uid).set(user.toJson());

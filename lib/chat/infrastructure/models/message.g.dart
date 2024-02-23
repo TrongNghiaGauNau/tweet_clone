@@ -13,6 +13,7 @@ _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
       senderId: json['senderId'] as String,
       message: json['message'] as String,
       sentAt: json['sentAt'] as String,
+      seen: json['seen'] as bool? ?? false,
       messageType: $enumDecode(_$MessageTypeEnumMap, json['messageType']),
     );
 
@@ -23,6 +24,7 @@ Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
       'senderId': instance.senderId,
       'message': instance.message,
       'sentAt': instance.sentAt,
+      'seen': instance.seen,
       'messageType': _$MessageTypeEnumMap[instance.messageType]!,
     };
 

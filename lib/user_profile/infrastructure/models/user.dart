@@ -18,6 +18,7 @@ class User with _$User {
     required bool isTwitterBlue,
     required String lastActive,
     required bool isOnline,
+    required String? fcmToken,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

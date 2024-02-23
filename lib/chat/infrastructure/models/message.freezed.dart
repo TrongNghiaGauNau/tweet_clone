@@ -25,6 +25,7 @@ mixin _$Message {
   String get senderId => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
   String get sentAt => throw _privateConstructorUsedError;
+  bool get seen => throw _privateConstructorUsedError;
   MessageType get messageType => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -43,6 +44,7 @@ abstract class $MessageCopyWith<$Res> {
       String senderId,
       String message,
       String sentAt,
+      bool seen,
       MessageType messageType});
 }
 
@@ -64,6 +66,7 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? senderId = null,
     Object? message = null,
     Object? sentAt = null,
+    Object? seen = null,
     Object? messageType = null,
   }) {
     return _then(_value.copyWith(
@@ -87,6 +90,10 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.sentAt
           : sentAt // ignore: cast_nullable_to_non_nullable
               as String,
+      seen: null == seen
+          ? _value.seen
+          : seen // ignore: cast_nullable_to_non_nullable
+              as bool,
       messageType: null == messageType
           ? _value.messageType
           : messageType // ignore: cast_nullable_to_non_nullable
@@ -108,6 +115,7 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       String senderId,
       String message,
       String sentAt,
+      bool seen,
       MessageType messageType});
 }
 
@@ -127,6 +135,7 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? senderId = null,
     Object? message = null,
     Object? sentAt = null,
+    Object? seen = null,
     Object? messageType = null,
   }) {
     return _then(_$MessageImpl(
@@ -150,6 +159,10 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.sentAt
           : sentAt // ignore: cast_nullable_to_non_nullable
               as String,
+      seen: null == seen
+          ? _value.seen
+          : seen // ignore: cast_nullable_to_non_nullable
+              as bool,
       messageType: null == messageType
           ? _value.messageType
           : messageType // ignore: cast_nullable_to_non_nullable
@@ -167,6 +180,7 @@ class _$MessageImpl implements _Message {
       required this.senderId,
       required this.message,
       required this.sentAt,
+      this.seen = false,
       required this.messageType});
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
@@ -183,11 +197,14 @@ class _$MessageImpl implements _Message {
   @override
   final String sentAt;
   @override
+  @JsonKey()
+  final bool seen;
+  @override
   final MessageType messageType;
 
   @override
   String toString() {
-    return 'Message(id: $id, receiverId: $receiverId, senderId: $senderId, message: $message, sentAt: $sentAt, messageType: $messageType)';
+    return 'Message(id: $id, receiverId: $receiverId, senderId: $senderId, message: $message, sentAt: $sentAt, seen: $seen, messageType: $messageType)';
   }
 
   @override
@@ -202,14 +219,15 @@ class _$MessageImpl implements _Message {
                 other.senderId == senderId) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.sentAt, sentAt) || other.sentAt == sentAt) &&
+            (identical(other.seen, seen) || other.seen == seen) &&
             (identical(other.messageType, messageType) ||
                 other.messageType == messageType));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, receiverId, senderId, message, sentAt, messageType);
+  int get hashCode => Object.hash(runtimeType, id, receiverId, senderId,
+      message, sentAt, seen, messageType);
 
   @JsonKey(ignore: true)
   @override
@@ -232,6 +250,7 @@ abstract class _Message implements Message {
       required final String senderId,
       required final String message,
       required final String sentAt,
+      final bool seen,
       required final MessageType messageType}) = _$MessageImpl;
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$MessageImpl.fromJson;
@@ -246,6 +265,8 @@ abstract class _Message implements Message {
   String get message;
   @override
   String get sentAt;
+  @override
+  bool get seen;
   @override
   MessageType get messageType;
   @override

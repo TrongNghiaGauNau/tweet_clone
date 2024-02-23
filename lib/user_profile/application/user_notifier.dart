@@ -61,6 +61,16 @@ class UserProfileController extends StateNotifier<UserProfileState> {
     }
   }
 
+  Future<model.User?> getUserInfoOnly(String uid) async {
+    try {
+      final user = await _userRepo.getUserData(uid);
+      return user;
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
   FutureEither<model.User> updateUserProfile(
       {required model.User user,
       required File? profileFile,

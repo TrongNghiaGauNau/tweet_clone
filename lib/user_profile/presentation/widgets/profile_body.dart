@@ -5,6 +5,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone_2/auth/shared/providers.dart';
+import 'package:twitter_clone_2/chat/presentation/views/detail_chat_screen.dart';
+import 'package:twitter_clone_2/chat/shared/providers.dart';
 import 'package:twitter_clone_2/core/application/const.dart';
 import 'package:twitter_clone_2/core/presentation/common/common_loading.dart';
 import 'package:twitter_clone_2/core/presentation/common/loading_page.dart';
@@ -233,7 +235,18 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
                     const SizedBox(width: 10),
                     if (currentUID != user!.uid)
                       RoundedMediaButton(
-                        onTap: () {},
+                        onTap: () {
+                          if (currentUser == null || user == null) {
+                            return;
+                          }
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => DetailChatScreen(
+                                  user: user!, currentUser: currentUser)));
+                          //add this user to chat list
+                          ref
+                              .read(messageDetailNotifierProvider.notifier)
+                              .addUserToChatList(currentUser.uid, user!.uid);
+                        },
                         label: 'Message',
                         backgroundColor: Pallete.whiteColor,
                         textColor: Pallete.backgroundColor,

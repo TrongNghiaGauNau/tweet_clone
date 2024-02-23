@@ -2,28 +2,38 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone_2/chat/infrastructure/chat_repository.dart';
+import 'package:twitter_clone_2/chat/infrastructure/models/chat_list_state/chat_list_state.dart';
 import 'package:twitter_clone_2/chat/infrastructure/models/message.dart';
 import 'package:twitter_clone_2/core/domain/type_defs.dart';
+import 'package:twitter_clone_2/notifications/application/push_notification_notifier.dart';
+import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart';
 
-class ChatNotifier extends StateNotifier<void> {
-  ChatNotifier({required ChatRepository chatRepository})
+class ChatNotifier extends StateNotifier<ChatListState> {
+  ChatNotifier(
+      {required ChatRepository chatRepository,
+      required PushNotificationNotifier pushNotificationNotifier})
       : _chatRepository = chatRepository,
-        super(null);
+        _pushNotificationNotifier = pushNotificationNotifier,
+        super(const ChatListState.init());
 
   final ChatRepository _chatRepository;
+  final PushNotificationNotifier _pushNotificationNotifier;
 
   FutureEither<void> sendMessage({
     required String message,
     required MessageType messageType,
     required String receiverId,
     required String senderId,
+    required String senderName,
+    required String? receiverToken,
   }) async {
+    final now = DateTime.now().toIso8601String();
     final myMessage = Message(
       id: '${senderId}_$receiverId',
       receiverId: receiverId,
       senderId: senderId,
       message: message,
-      sentAt: DateTime.now().toIso8601String(),
+      sentAt: now,
       messageType: messageType,
     );
     final otherMessage = Message(
@@ -31,12 +41,18 @@ class ChatNotifier extends StateNotifier<void> {
       receiverId: receiverId,
       senderId: senderId,
       message: message,
-      sentAt: DateTime.now().toIso8601String(),
+      sentAt: now,
       messageType: messageType,
     );
     final res = await _chatRepository.sendMessage(
         myMessage: myMessage, otherMessage: otherMessage);
-    res.fold((l) => debugPrint(l.messsage), (r) => null);
+    res.fold((l) => debugPrint(l.messsage), (r) {
+      if (receiverToken == null) return;
+      _pushNotificationNotifier.sendPushNoti(
+          senderName: senderName,
+          receiverToken: receiverToken,
+          bodyMessage: message);
+    });
     return res;
   }
 
@@ -58,5 +74,67 @@ class ChatNotifier extends StateNotifier<void> {
       debugPrint('chat_error: $e');
       return null;
     }
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>>? getAllChatUsers() {
+    try {
+      return _chatRepository.getAllChatUsers();
+    } catch (e) {
+      debugPrint('chat_error: $e');
+      return null;
+    }
+  }
+
+  FutureEither<void> addUserToChatList(String userId, String chatUserId) async {
+    return await _chatRepository.addUserToChatList(userId, chatUserId);
+  }
+
+  void getAllChat(List<String> listChat) async {
+    try {
+      state = const ChatListState.loading();
+      final listData = await _chatRepository.getAllChat(listChat);
+      final chatList =
+          listData?.docs.map((e) => User.fromJson(e.data())).toList() ?? [];
+      if (chatList.isEmpty) {
+        state = const ChatListState.empty();
+      } else {
+        List<User> orderedChatList = [];
+
+        for (String value in listChat) {
+          for (User user in chatList) {
+            if (user.uid == value) {
+              orderedChatList.add(user);
+              break;
+            }
+          }
+        }
+        state = ChatListState.data(chatList: orderedChatList);
+      }
+    } on FirebaseException catch (e) {
+      debugPrint('chat_error: ${e.message ?? 'Some unexpected error occured'}');
+      state = const ChatListState.error();
+      return null;
+    } catch (e) {
+      debugPrint('chat_error: ${e.toString()}');
+      state = const ChatListState.error();
+      return null;
+    }
+  }
+
+  // FutureVoid updateMessage(
+  //     {required String senderId,
+  //     required String chatId,
+  //     required Message message}) async {
+  //   await _chatRepository.updateMessage(
+  //       senderId: senderId, chatId: chatId, message: message);
+  // }
+
+  FutureVoid updateMessage({
+    required String myId,
+    required String otherId,
+    required Message message,
+  }) async {
+    await _chatRepository.setSeenMessage(
+        myId: myId, otherId: otherId, message: message);
   }
 }
