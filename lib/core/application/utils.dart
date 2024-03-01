@@ -26,9 +26,9 @@ Future<List<File>> pickImages() async {
   return images;
 }
 
-Future<File?> pickImage() async {
+Future<File?> pickImage({ImageSource imageSource = ImageSource.gallery}) async {
   final picker = ImagePicker();
-  final imageFile = await picker.pickImage(source: ImageSource.gallery);
+  final imageFile = await picker.pickImage(source: imageSource);
   if (imageFile != null) {
     return File(imageFile.path);
   }

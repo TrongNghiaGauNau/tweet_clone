@@ -179,8 +179,8 @@ class TweetCard extends HookConsumerWidget {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 10),
-                                      child:
-                                          HashtagOrLinkText(text: tweet.text),
+                                      child: HashtagOrLinkText(
+                                          text: childTweet.text),
                                     ),
                                     if (childTweet.tweetType ==
                                         TweetType.image.name)

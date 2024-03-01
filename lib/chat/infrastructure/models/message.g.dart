@@ -13,8 +13,12 @@ _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
       senderId: json['senderId'] as String,
       message: json['message'] as String,
       sentAt: json['sentAt'] as String,
+      imagesIdList: (json['imagesIdList'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       seen: json['seen'] as bool? ?? false,
-      messageType: $enumDecode(_$MessageTypeEnumMap, json['messageType']),
+      replyMessage: json['replyMessage'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
@@ -24,12 +28,7 @@ Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
       'senderId': instance.senderId,
       'message': instance.message,
       'sentAt': instance.sentAt,
+      'imagesIdList': instance.imagesIdList,
       'seen': instance.seen,
-      'messageType': _$MessageTypeEnumMap[instance.messageType]!,
+      'replyMessage': instance.replyMessage,
     };
-
-const _$MessageTypeEnumMap = {
-  MessageType.text: 'text',
-  MessageType.media: 'media',
-  MessageType.mix: 'mix',
-};

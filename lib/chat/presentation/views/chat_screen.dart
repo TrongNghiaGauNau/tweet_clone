@@ -3,9 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone_2/chat/presentation/widgets/chat_tile.dart';
 import 'package:twitter_clone_2/chat/shared/providers.dart';
+import 'package:twitter_clone_2/core/presentation/mixin.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
 
-class ChatScreen extends HookConsumerWidget {
+class ChatScreen extends HookConsumerWidget with DismissKeyboard {
   const ChatScreen({super.key});
 
   @override
@@ -14,6 +15,9 @@ class ChatScreen extends HookConsumerWidget {
     final streamUsers =
         ref.watch(messageDetailNotifierProvider.notifier).getAllChatUsers();
     final chatList = ref.watch(messageDetailNotifierProvider);
+
+    useEffect(() => dismiss());
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat Screen'),
@@ -64,27 +68,6 @@ class ChatScreen extends HookConsumerWidget {
                           loading: () =>
                               const Center(child: CircularProgressIndicator()));
                     });
-                    // return StreamBuilder(
-                    //   stream: streamChatList,
-                    //   builder: (context, snapshot) {
-                    //     final List<User>? listChat =
-                    //         snapshot.data?.docs.map((e) {
-                    //       return User.fromJson(e.data());
-                    //     }).toList();
-                    //     debugPrint('hehe listChat: $listChat');
-                    //     if (listChat == null) {
-                    //       return const Center(
-                    //           child: Text('Start chatting with someone'));
-                    //     }
-                    //     return ListView.builder(
-                    //       itemCount: listChat.length,
-                    //       itemBuilder: (context, index) {
-                    //         return ChatTile(
-                    //             user: listChat[index], currentUid: currentUid);
-                    //       },
-                    //     );
-                    //   },
-                    // );
                   }
                   return const Center(
                       child: Text('No one yet you have sent message'));

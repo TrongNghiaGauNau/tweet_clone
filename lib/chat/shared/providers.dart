@@ -11,12 +11,20 @@ final messageDetailNotifierProvider =
     StateNotifierProvider<ChatNotifier, ChatListState>((ref) {
   return ChatNotifier(
       chatRepository: ref.watch(chatRepository),
-      pushNotificationNotifier: ref.watch(pushNotificationProvider.notifier));
+      pushNotificationNotifier: ref.watch(pushNotificationProvider.notifier),
+      tweetRepository: ref.watch(tweetRepositoryProvider));
 });
 
 final messageStateNotifierProvider = StateNotifierProvider.family
     .autoDispose<MessageNotifier, MessageState, Message>((ref, message) {
-  return MessageNotifier(message: message);
+  return MessageNotifier(
+      message: message, chatRepository: ref.watch(chatRepository));
 });
 
 final isInChatProvider = StateProvider<bool>((ref) => false);
+
+final replyMessageProvider = StateProvider.autoDispose<Message?>((ref) => null);
+final onQuotedMessageProvider =
+    StateProvider.autoDispose<Message?>((_) => null);
+final focusMessageIdProvider =
+    StateProvider.autoDispose<String?>((ref) => null);

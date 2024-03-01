@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:twitter_clone_2/attachments/presentation/list_files_view.dart';
+import 'package:twitter_clone_2/tweet/application/tweet_const.dart';
 import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
 
 class CarouselImage extends HookWidget {
@@ -26,8 +27,14 @@ class CarouselImage extends HookWidget {
                   margin: const EdgeInsets.symmetric(horizontal: 5),
                   child: GestureDetector(
                     onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          ListFilesView(initialIndex: index, tweet: tweet),
+                      builder: (context) => ListFilesView(
+                        initialIndex: index,
+                        imagesList: tweet.imagesLink,
+                        createAt: tweet.tweetedAt,
+                        creatorName:
+                            tweet.tweetCreator[TweetCreator.creatorName] ??
+                                'username',
+                      ),
                     )),
                     child: SingleImageCarousel(link: link),
                   ),

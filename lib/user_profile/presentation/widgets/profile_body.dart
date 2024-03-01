@@ -112,8 +112,8 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
                     if (isChangeBanner.value)
                       Positioned.fill(
                           child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.black12.withOpacity(0.5)),
+                        decoration:
+                            BoxDecoration(color: Colors.red.withOpacity(0.5)),
                         child: const Center(
                           child: CircularProgressIndicator(),
                         ),

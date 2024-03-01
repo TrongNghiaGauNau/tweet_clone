@@ -31,8 +31,8 @@ class ChatRepository {
     }
   }
 
-  FutureEitherVoid sendMessage(
-      {required Message myMessage, required Message otherMessage}) async {
+  Either<Failure, void> sendMessage(
+      {required Message myMessage, required Message otherMessage}) {
     try {
       final senderMsg = _chatRepo
           .collection('chat')
@@ -43,8 +43,8 @@ class ChatRepository {
           .doc(otherMessage.receiverId)
           .collection(otherMessage.id);
 
-      await senderMsg.doc(myMessage.sentAt).set(myMessage.toJson());
-      await receiverMsg.doc(otherMessage.sentAt).set(otherMessage.toJson());
+      senderMsg.doc(myMessage.sentAt).set(myMessage.toJson());
+      receiverMsg.doc(otherMessage.sentAt).set(otherMessage.toJson());
       //reset timeline on my new chat
       _chatRepo
           .collection('chat_list')
@@ -166,5 +166,32 @@ class ChatRepository {
         .collection(otherChatId)
         .doc(message.sentAt)
         .update({'seen': true});
+  }
+
+  void deleteMessage({
+    required String myId,
+    required String otherId,
+    required String messageId,
+  }) {
+    try {
+      final myChatId = '${myId}_$otherId';
+      final otherChatId = '${otherId}_$myId';
+      //del message in my chat
+      _chatRepo
+          .collection('chat')
+          .doc(myId)
+          .collection(myChatId)
+          .doc(messageId)
+          .delete();
+      //del message in other chat
+      _chatRepo
+          .collection('chat')
+          .doc(otherId)
+          .collection(otherChatId)
+          .doc(messageId)
+          .delete();
+    } catch (e) {
+      debugPrint('delete error: $e');
+    }
   }
 }

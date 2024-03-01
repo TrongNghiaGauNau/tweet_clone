@@ -11,7 +11,6 @@ class HashtagOrLinkText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<TextSpan> textSpans = [];
-
     text.split(' ').forEach(
       (element) {
         if (element.startsWith('#')) {

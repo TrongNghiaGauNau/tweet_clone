@@ -25,8 +25,9 @@ mixin _$Message {
   String get senderId => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
   String get sentAt => throw _privateConstructorUsedError;
-  bool get seen => throw _privateConstructorUsedError;
-  MessageType get messageType => throw _privateConstructorUsedError;
+  List<String> get imagesIdList => throw _privateConstructorUsedError;
+  bool get seen => throw _privateConstructorUsedError; // Message? replyMessage,
+  Map<String, dynamic>? get replyMessage => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -44,8 +45,9 @@ abstract class $MessageCopyWith<$Res> {
       String senderId,
       String message,
       String sentAt,
+      List<String> imagesIdList,
       bool seen,
-      MessageType messageType});
+      Map<String, dynamic>? replyMessage});
 }
 
 /// @nodoc
@@ -66,8 +68,9 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? senderId = null,
     Object? message = null,
     Object? sentAt = null,
+    Object? imagesIdList = null,
     Object? seen = null,
-    Object? messageType = null,
+    Object? replyMessage = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -90,14 +93,18 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.sentAt
           : sentAt // ignore: cast_nullable_to_non_nullable
               as String,
+      imagesIdList: null == imagesIdList
+          ? _value.imagesIdList
+          : imagesIdList // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       seen: null == seen
           ? _value.seen
           : seen // ignore: cast_nullable_to_non_nullable
               as bool,
-      messageType: null == messageType
-          ? _value.messageType
-          : messageType // ignore: cast_nullable_to_non_nullable
-              as MessageType,
+      replyMessage: freezed == replyMessage
+          ? _value.replyMessage
+          : replyMessage // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ) as $Val);
   }
 }
@@ -115,8 +122,9 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       String senderId,
       String message,
       String sentAt,
+      List<String> imagesIdList,
       bool seen,
-      MessageType messageType});
+      Map<String, dynamic>? replyMessage});
 }
 
 /// @nodoc
@@ -135,8 +143,9 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? senderId = null,
     Object? message = null,
     Object? sentAt = null,
+    Object? imagesIdList = null,
     Object? seen = null,
-    Object? messageType = null,
+    Object? replyMessage = freezed,
   }) {
     return _then(_$MessageImpl(
       id: null == id
@@ -159,14 +168,18 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.sentAt
           : sentAt // ignore: cast_nullable_to_non_nullable
               as String,
+      imagesIdList: null == imagesIdList
+          ? _value._imagesIdList
+          : imagesIdList // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       seen: null == seen
           ? _value.seen
           : seen // ignore: cast_nullable_to_non_nullable
               as bool,
-      messageType: null == messageType
-          ? _value.messageType
-          : messageType // ignore: cast_nullable_to_non_nullable
-              as MessageType,
+      replyMessage: freezed == replyMessage
+          ? _value._replyMessage
+          : replyMessage // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ));
   }
 }
@@ -180,8 +193,11 @@ class _$MessageImpl implements _Message {
       required this.senderId,
       required this.message,
       required this.sentAt,
+      final List<String> imagesIdList = const [],
       this.seen = false,
-      required this.messageType});
+      final Map<String, dynamic>? replyMessage})
+      : _imagesIdList = imagesIdList,
+        _replyMessage = replyMessage;
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
       _$$MessageImplFromJson(json);
@@ -196,15 +212,33 @@ class _$MessageImpl implements _Message {
   final String message;
   @override
   final String sentAt;
+  final List<String> _imagesIdList;
+  @override
+  @JsonKey()
+  List<String> get imagesIdList {
+    if (_imagesIdList is EqualUnmodifiableListView) return _imagesIdList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_imagesIdList);
+  }
+
   @override
   @JsonKey()
   final bool seen;
+// Message? replyMessage,
+  final Map<String, dynamic>? _replyMessage;
+// Message? replyMessage,
   @override
-  final MessageType messageType;
+  Map<String, dynamic>? get replyMessage {
+    final value = _replyMessage;
+    if (value == null) return null;
+    if (_replyMessage is EqualUnmodifiableMapView) return _replyMessage;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
 
   @override
   String toString() {
-    return 'Message(id: $id, receiverId: $receiverId, senderId: $senderId, message: $message, sentAt: $sentAt, seen: $seen, messageType: $messageType)';
+    return 'Message(id: $id, receiverId: $receiverId, senderId: $senderId, message: $message, sentAt: $sentAt, imagesIdList: $imagesIdList, seen: $seen, replyMessage: $replyMessage)';
   }
 
   @override
@@ -219,15 +253,25 @@ class _$MessageImpl implements _Message {
                 other.senderId == senderId) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.sentAt, sentAt) || other.sentAt == sentAt) &&
+            const DeepCollectionEquality()
+                .equals(other._imagesIdList, _imagesIdList) &&
             (identical(other.seen, seen) || other.seen == seen) &&
-            (identical(other.messageType, messageType) ||
-                other.messageType == messageType));
+            const DeepCollectionEquality()
+                .equals(other._replyMessage, _replyMessage));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, receiverId, senderId,
-      message, sentAt, seen, messageType);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      receiverId,
+      senderId,
+      message,
+      sentAt,
+      const DeepCollectionEquality().hash(_imagesIdList),
+      seen,
+      const DeepCollectionEquality().hash(_replyMessage));
 
   @JsonKey(ignore: true)
   @override
@@ -250,8 +294,9 @@ abstract class _Message implements Message {
       required final String senderId,
       required final String message,
       required final String sentAt,
+      final List<String> imagesIdList,
       final bool seen,
-      required final MessageType messageType}) = _$MessageImpl;
+      final Map<String, dynamic>? replyMessage}) = _$MessageImpl;
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$MessageImpl.fromJson;
 
@@ -266,9 +311,11 @@ abstract class _Message implements Message {
   @override
   String get sentAt;
   @override
-  bool get seen;
+  List<String> get imagesIdList;
   @override
-  MessageType get messageType;
+  bool get seen;
+  @override // Message? replyMessage,
+  Map<String, dynamic>? get replyMessage;
   @override
   @JsonKey(ignore: true)
   _$$MessageImplCopyWith<_$MessageImpl> get copyWith =>

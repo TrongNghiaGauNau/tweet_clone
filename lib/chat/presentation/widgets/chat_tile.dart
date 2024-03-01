@@ -53,8 +53,16 @@ class ChatTile extends ConsumerWidget {
               }
               return Card(
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                  side: const BorderSide(color: Colors.white),
+                ),
                 child: ListTile(
+                  tileColor: message == null
+                      ? Colors.black
+                      : message!.senderId != currentUid &&
+                              message!.seen == false
+                          ? null
+                          : Colors.black,
                   leading: CircleAvatar(
                       backgroundImage: NetworkImage(user.profilePic == ''
                           ? defaultAvatar

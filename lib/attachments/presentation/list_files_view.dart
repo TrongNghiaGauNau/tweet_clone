@@ -4,29 +4,34 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:twitter_clone_2/tweet/application/tweet_const.dart';
-import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.dart';
 
 class ListFilesView extends HookConsumerWidget {
   const ListFilesView(
-      {super.key, required this.initialIndex, required this.tweet});
+      {super.key,
+      required this.initialIndex,
+      required this.imagesList,
+      required this.createAt,
+      this.creatorName});
 
   final int initialIndex;
-  final Tweet tweet;
+  final List<String> imagesList;
+  final String createAt;
+  final String? creatorName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final createdDate =
-        DateFormat('yyyy-MM-dd').format(DateTime.parse(tweet.tweetedAt));
-    final imageList = tweet.imagesLink;
+        DateFormat('yyyy-MM-dd').format(DateTime.parse(createAt));
+    final imageList = imagesList;
     final pageController = usePageController(initialPage: initialIndex);
     return Scaffold(
       appBar: AppBar(
         title: Column(
           children: [
-            Text(tweet.tweetCreator[TweetCreator.creatorName] ?? 'username',
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            if (creatorName != null)
+              Text(creatorName!,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
             Text(createdDate, style: const TextStyle(fontSize: 14)),
           ],
         ),

@@ -31,6 +31,7 @@ class _MainViewState extends ConsumerState<MainView> {
       if (message.toString().contains('pause')) {
         ref.read(userControllerProvider.notifier).updateActiveStatus(false);
       }
+      debugPrint('hihi: $message');
 
       return Future.value(message);
     });

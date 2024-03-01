@@ -12,19 +12,11 @@ class Message with _$Message {
     required String senderId,
     required String message,
     required String sentAt,
+    @Default([]) List<String> imagesIdList,
     @Default(false) bool seen,
-    required MessageType messageType,
+    Map<String, dynamic>? replyMessage,
   }) = _Message;
 
   factory Message.fromJson(Map<String, dynamic> json) =>
       _$MessageFromJson(json);
-}
-
-enum MessageType {
-  text('text'),
-  media('media'),
-  mix('mix');
-
-  final String type;
-  const MessageType(this.type);
 }
