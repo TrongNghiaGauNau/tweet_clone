@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twitter_clone_2/chat/infrastructure/models/message.dart';
@@ -79,8 +78,9 @@ class DetailChatScreen extends HookConsumerWidget {
                     final messagesList =
                         data?.map((e) => Message.fromJson(e.data())).toList() ??
                             [];
-                    messList =
-                        messagesList.map((message) => message.sentAt).toList();
+                    messList = messagesList.reversed
+                        .map((message) => message.sentAt)
+                        .toList();
                     if (messagesList.isEmpty) {
                       return const Center(
                           child: Text(
@@ -90,11 +90,17 @@ class DetailChatScreen extends HookConsumerWidget {
                       ));
                     }
 
+                    //to prevent bouncing
+                    final reverseMessageList = messagesList.reversed.toList();
+
                     return ScrollablePositionedList.builder(
+                      physics: const ClampingScrollPhysics(),
                       itemCount: messagesList.length,
                       itemScrollController: itemScrollController,
+                      addAutomaticKeepAlives: true,
+                      reverse: true,
                       itemBuilder: (context, index) {
-                        return MessageCard(message: messagesList[index]);
+                        return MessageCard(message: reverseMessageList[index]);
                       },
                     );
                 }
@@ -107,6 +113,7 @@ class DetailChatScreen extends HookConsumerWidget {
               senderId: currentUser.uid,
               senderName: currentUser.name,
               receiverToken: user.fcmToken,
+              otherUser: user,
             ),
           ],
         ),

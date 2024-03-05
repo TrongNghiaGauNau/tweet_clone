@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:twitter_clone_2/chat/infrastructure/models/message.dart';
+import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart';
 
 class ReplyMessage extends StatelessWidget {
   const ReplyMessage({
     super.key,
     required this.replyMessage,
+    required this.currentUid,
+    required this.otherUser,
   });
 
   final Message replyMessage;
+  final String currentUid;
+  final User otherUser;
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +22,12 @@ class ReplyMessage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.reply),
+              const Icon(Icons.reply),
               Text(
-                'Reply to somebody',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                'Reply to ${currentUid == replyMessage.senderId ? 'yourself' : otherUser.name}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),

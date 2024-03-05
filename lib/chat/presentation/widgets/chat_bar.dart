@@ -8,6 +8,7 @@ import 'package:twitter_clone_2/chat/presentation/widgets/uploading_chat_attachm
 import 'package:twitter_clone_2/chat/shared/providers.dart';
 import 'package:twitter_clone_2/core/application/utils.dart';
 import 'package:twitter_clone_2/theme/pallete.dart';
+import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart';
 
 class ChatBar extends HookConsumerWidget {
   const ChatBar({
@@ -18,6 +19,7 @@ class ChatBar extends HookConsumerWidget {
     required this.senderId,
     required this.senderName,
     required this.receiverToken,
+    required this.otherUser,
   });
 
   final TextEditingController textEditingController;
@@ -26,6 +28,7 @@ class ChatBar extends HookConsumerWidget {
   final String senderId;
   final String senderName;
   final String? receiverToken;
+  final User otherUser;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,7 +41,11 @@ class ChatBar extends HookConsumerWidget {
         Column(
           children: [
             const Divider(color: Colors.white),
-            if (replyMessage != null) ReplyMessage(replyMessage: replyMessage),
+            if (replyMessage != null)
+              ReplyMessage(
+                  replyMessage: replyMessage,
+                  otherUser: otherUser,
+                  currentUid: senderId),
             if (imagesList.isNotEmpty)
               UploadingAttachmentChatItem(files: imagesList),
             if (imagesList.isNotEmpty) const SizedBox(height: 5),

@@ -115,15 +115,18 @@ class _SwipeReplyState extends State<SwipeReply>
                   child: widget.child,
                 ),
                 Positioned(
-                  right: -20,
+                  right: widget.initAlign == Alignment.centerRight ? -20 : null,
+                  left: widget.initAlign == Alignment.centerRight ? null : -20,
                   child: Container(
                     transform: Matrix4.translationValues(
                         -widget.initAlign.x * _dragSpacing / 2, 0, 0),
                     alignment: widget.initAlign,
-                    child: const Icon(
+                    child: Icon(
                       Icons.reply,
                       size: 20,
-                      color: Colors.blue,
+                      color: widget.initAlign == Alignment.centerRight
+                          ? Colors.blue
+                          : Colors.white,
                     ),
                   ),
                 )

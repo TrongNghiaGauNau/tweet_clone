@@ -28,7 +28,7 @@ class DetailChatAppBar extends StatelessWidget with TimeFormat {
       builder: (context, snapshot) {
         final data = snapshot.data?.docs;
         final userInfo = data?.map((e) => User.fromJson(e.data())).toList();
-        const offline = ' Online';
+        const offline = ' Offline';
         return Row(
           children: [
             IconButton(
@@ -82,7 +82,7 @@ class DetailChatAppBar extends StatelessWidget with TimeFormat {
                               ? 'Online'
                               : userInfo[0].lastActive.isEmpty
                                   ? offline
-                                  : 'Last seen ${timeAgo(userInfo[0].lastActive) == 'now' ? 'just now' : userInfo[0].lastActive}'
+                                  : 'Last seen ${timeAgo(userInfo[0].lastActive) == 'now' ? 'just now' : timeAgo(userInfo[0].lastActive)}'
                           : offline)
                     ],
                   )
