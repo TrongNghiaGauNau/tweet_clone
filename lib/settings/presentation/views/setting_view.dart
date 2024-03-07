@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone_2/auth/shared/providers.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
 import 'package:twitter_clone_2/test.dart';
+import 'package:twitter_clone_2/upgrade/presentation/upgrade_view.dart';
 import 'package:twitter_clone_2/user_profile/presentation/views/profile_screen.dart';
 
 class SettingView extends ConsumerWidget {
@@ -34,6 +35,13 @@ class SettingView extends ConsumerWidget {
               text: 'Log Out',
               onTap: () =>
                   ref.read(authControllerProvider.notifier).logout(context),
+            ),
+            const SizedBox(height: 10),
+            settingTile(
+              icon: const Icon(Icons.star, color: Colors.yellow),
+              text: 'Upgrade you account',
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const UpgradeAccountView())),
             ),
             const SizedBox(height: 10),
             settingTile(

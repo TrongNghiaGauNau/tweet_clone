@@ -155,4 +155,20 @@ class UserRepsitory {
       return left(Failure(e.toString(), stackTrace));
     }
   }
+
+  FutureEither<void> updateBlueAccount(String userId) async {
+    try {
+      //update user information
+      _firebaseFirestore.doc(userId).update({'isTwitterBlue': true});
+      //update user UI info
+      _userUIRepo.doc(userId).update({'isTwitterBlue': true});
+      return right(null);
+    } on FirebaseException catch (e, stackTrace) {
+      return left(Failure(
+          'user_api: ${e.message ?? 'Some unexpected error occured'}',
+          stackTrace));
+    } catch (e, stackTrace) {
+      return left(Failure(e.toString(), stackTrace));
+    }
+  }
 }

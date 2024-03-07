@@ -26,5 +26,7 @@ final userDetail =
 
 final userUINotifierProvider =
     StateNotifierProvider<UserUINotifier, UserUIState>((ref) {
-  return UserUINotifier(userRepo: ref.watch(userRepositoryProvider));
+  return UserUINotifier(
+      userRepo: ref.watch(userRepositoryProvider),
+      authenticator: ref.watch(firebaseAuthProvider));
 });

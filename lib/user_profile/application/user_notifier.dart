@@ -13,6 +13,7 @@ import 'package:twitter_clone_2/tweet/infrastructure/models/tweet/tweet_model.da
 import 'package:twitter_clone_2/tweet/infrastructure/tweet_repository.dart';
 import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart'
     as model;
+import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart';
 import 'package:twitter_clone_2/user_profile/infrastructure/models/user_profile_state.dart';
 import 'package:twitter_clone_2/user_profile/infrastructure/user_repository.dart';
 
@@ -171,6 +172,17 @@ class UserProfileController extends StateNotifier<UserProfileState> {
           stackTrace));
     } catch (e, stackTrace) {
       return left(Failure(e.toString(), stackTrace));
+    }
+  }
+
+  FutureEither<void> updateBlueAccount() async {
+    try {
+      final userId = _authenticator.currentUser?.uid ?? '';
+      final res = await _userRepo.updateBlueAccount(userId);
+      return res;
+    } catch (e, st) {
+      debugPrint('upgrade account error: ${e.toString()}');
+      return left(Failure(e.toString(), st));
     }
   }
 }

@@ -4,11 +4,14 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone_2/auth/presentation/login/login_screen.dart';
 import 'package:twitter_clone_2/auth/shared/providers.dart';
+import 'package:twitter_clone_2/core/application/const.dart';
 import 'package:twitter_clone_2/core/presentation/common/loading_page.dart';
 import 'package:twitter_clone_2/core/presentation/main_view.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
+import 'package:twitter_clone_2/env.dart';
 import 'package:twitter_clone_2/firebase_options.dart';
 import 'package:twitter_clone_2/theme/app_theme.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() async {
   final WidgetsBinding widgetsBinding =
@@ -16,11 +19,9 @@ void main() async {
   //splash
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // //send push notifications
-  // await NotificationRepository().initializeLocalNotifications();
-  // await FirebaseMessaging.instance.getInitialMessage();
-  // FirebaseMessaging.onBackgroundMessage(
-  //     NotificationRepository().firebaseMessagingBackgroundHandler);
+  //stripe
+  Stripe.publishableKey = stripePublishKey;
+  await Stripe.instance.applySettings();
 
   runApp(const ProviderScope(child: MainApp()));
 }

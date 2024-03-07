@@ -46,6 +46,7 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
     final tweetsNoImages = tweetsList.unmatched;
     final changedBannerPic = useState<File?>(null);
     final isChangeBanner = useState(false);
+    final tabIndex = useState(0);
 
     void onPickImages() async {
       changedBannerPic.value = await pickImage();
@@ -63,10 +64,6 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
         changedBannerPic.value = null;
         isChangeBanner.value = false;
       });
-    }
-
-    double getImageTweetsHeight(int numImages) {
-      return itemHeightSize * (numImages <= 3 ? 1 : (numImages - 2) % 3 + 1);
     }
 
     return user == null
@@ -136,6 +133,20 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
                             radius: 45,
                           ),
                         )),
+                    if (user!.isTwitterBlue)
+                      Positioned(
+                          left: 120,
+                          bottom: -50,
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.asset(
+                                'assets/images/blue_account_icon.png'),
+                          )),
                     if (currentUID == user!.uid &&
                         changedBannerPic.value == null)
                       Positioned(
@@ -216,10 +227,6 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
                                         followedUser: user!,
                                         context: context,
                                         currentUser: currentUser);
-
-                                // ref
-                                //     .read(tweetControllerProvider.notifier)
-                                //     .getTweets(ref);
                               }
                             },
                       label: currentUID == user!.uid
@@ -255,33 +262,27 @@ class ProfileBody extends HookConsumerWidget with LoadingMixin {
                 ),
                 const SizedBox(height: 5),
                 const Divider(color: Pallete.whiteColor),
-                const TabBar(
+                TabBar(
                   indicatorColor: Pallete.blueColor,
-                  tabs: [
-                    Tab(
-                      icon: Icon(Icons.image),
-                    ),
-                    Tab(
-                      icon: Icon(Icons.app_registration_rounded),
-                    ),
+                  onTap: (value) => tabIndex.value = value,
+                  tabs: const [
+                    Tab(icon: Icon(Icons.image)),
+                    Tab(icon: Icon(Icons.app_registration_rounded)),
                   ],
                 ),
-                SizedBox(
-                  height: getImageTweetsHeight(tweetsWithImages.length),
-                  child: TabBarView(
-                    children: [
-                      ImageTweets(
-                          tweetsWithImages: tweetsWithImages,
-                          context: context,
-                          itemSize: itemSize),
-                      ListView.builder(
-                        itemCount: tweetsNoImages.length,
-                        itemBuilder: (context, index) {
-                          return TweetCard(tweetData: tweetsNoImages[index]);
-                        },
-                      ),
-                    ],
-                  ),
+                IndexedStack(
+                  index: tabIndex.value,
+                  children: <Widget>[
+                    ImageTweets(
+                        tweetsWithImages: tweetsWithImages,
+                        context: context,
+                        itemSize: itemSize),
+                    Column(
+                      children: tweetsNoImages
+                          .map((tweet) => TweetCard(tweetData: tweet))
+                          .toList(),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -303,6 +304,11 @@ class ImageTweets extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final a = tweetsWithImages.first;
+    final List<Tweet> b = [];
+    for (int i = 1; i < 20; i++) {
+      b.add(a);
+    }
     useAutomaticKeepAlive();
     return Wrap(
       alignment: WrapAlignment.start,
