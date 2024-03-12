@@ -25,12 +25,31 @@ class TweetCommentTile extends HookConsumerWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(5),
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(user != null
-                    ? user.profilePic != ''
-                        ? user.profilePic
-                        : defaultAvatar
-                    : defaultAvatar),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(user != null
+                        ? user.profilePic != ''
+                            ? user.profilePic
+                            : defaultAvatar
+                        : defaultAvatar),
+                  ),
+                  if (user!.isTwitterBlue)
+                    Positioned(
+                        right: -10,
+                        bottom: -10,
+                        child: Container(
+                          height: 30,
+                          width: 30,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.asset(
+                              'assets/images/blue_account_icon.png'),
+                        )),
+                ],
               ),
             ),
             Expanded(

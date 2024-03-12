@@ -42,16 +42,35 @@ class DetailTweetCard extends HookConsumerWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              margin: const EdgeInsets.all(10).copyWith(top: 1),
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(user != null
-                    ? user.profilePic.isNotEmpty
-                        ? user.profilePic
-                        : defaultAvatar
-                    : defaultAvatar),
-                radius: 35,
-              ),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(10).copyWith(top: 1),
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(user != null
+                        ? user.profilePic.isNotEmpty
+                            ? user.profilePic
+                            : defaultAvatar
+                        : defaultAvatar),
+                    radius: 35,
+                  ),
+                ),
+                if (user != null && user.isTwitterBlue)
+                  Positioned(
+                      bottom: 5,
+                      right: 5,
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        child:
+                            Image.asset('assets/images/blue_account_icon.png'),
+                      )),
+              ],
             ),
             Expanded(
               child: Column(

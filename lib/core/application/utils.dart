@@ -56,3 +56,13 @@ List<String> getHashtagsFromText(String text) {
   }
   return hashTags;
 }
+
+String getUniqueIdFrom2String(String user1Id, String user2Id) {
+  // Sort the user IDs alphabetically to ensure consistency
+  List<String> sortedUserIds = [user1Id, user2Id]..sort();
+
+  // Concatenate the sorted user IDs to create a unique chat ID
+  String chatId = sortedUserIds.join('_');
+
+  return chatId;
+}

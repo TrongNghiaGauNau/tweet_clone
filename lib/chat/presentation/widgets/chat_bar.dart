@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone_2/attachments/shared/providers.dart';
-import 'package:twitter_clone_2/chat/infrastructure/models/message.dart';
 import 'package:twitter_clone_2/chat/presentation/widgets/reply_message.dart';
 import 'package:twitter_clone_2/chat/presentation/widgets/uploading_chat_attachment_item.dart';
 import 'package:twitter_clone_2/chat/shared/providers.dart';
@@ -13,7 +12,6 @@ import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart';
 class ChatBar extends HookConsumerWidget {
   const ChatBar({
     super.key,
-    required this.textEditingController,
     required this.ref,
     required this.receiverId,
     required this.senderId,
@@ -22,7 +20,6 @@ class ChatBar extends HookConsumerWidget {
     required this.otherUser,
   });
 
-  final TextEditingController textEditingController;
   final WidgetRef ref;
   final String receiverId;
   final String senderId;
@@ -35,6 +32,10 @@ class ChatBar extends HookConsumerWidget {
     final imagesList = ref.watch(uploadingAttachmentProvider);
     final isSending = useState(false);
     final replyMessage = ref.watch(replyMessageProvider);
+    final textController = useTextEditingController();
+
+    final bool emptyMessage = useListenableSelector(
+        textController, () => textController.text.trim().isEmpty);
 
     return Stack(
       children: [
@@ -63,7 +64,7 @@ class ChatBar extends HookConsumerWidget {
                                 color: Pallete.blueColor)),
                         Expanded(
                           child: TextField(
-                            controller: textEditingController,
+                            controller: textController,
                             keyboardType: TextInputType.multiline,
                             minLines: 1,
                             maxLines: 3,
@@ -108,16 +109,16 @@ class ChatBar extends HookConsumerWidget {
                 ),
                 //send button
                 GestureDetector(
-                  onTap: isSending.value
+                  onTap: isSending.value || emptyMessage
                       ? null
                       : () async {
                           isSending.value = true;
                           final res = await ref
                               .read(messageDetailNotifierProvider.notifier)
                               .sendMessage(
-                                  message: textEditingController.text.isEmpty
+                                  content: textController.text.isEmpty
                                       ? ''
-                                      : textEditingController.text,
+                                      : textController.text,
                                   receiverId: receiverId,
                                   senderId: senderId,
                                   senderName: senderName,
@@ -126,7 +127,7 @@ class ChatBar extends HookConsumerWidget {
                                   replyMessage: replyMessage);
 
                           res.fold((l) => null, (r) {
-                            textEditingController.clear();
+                            textController.clear();
                             isSending.value = false;
                             ref
                                 .read(uploadingAttachmentProvider.notifier)
@@ -139,7 +140,7 @@ class ChatBar extends HookConsumerWidget {
                     padding: const EdgeInsets.all(10).copyWith(right: 5),
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isSending.value
+                        color: isSending.value || emptyMessage
                             ? Pallete.greyColor
                             : Pallete.blueColor),
                     child: const Center(

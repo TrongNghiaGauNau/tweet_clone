@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:twitter_clone_2/chat/presentation/widgets/chat_menu_popup.dart';
 import 'package:twitter_clone_2/chat/shared/providers.dart';
+import 'package:twitter_clone_2/core/application/const.dart';
 import 'package:twitter_clone_2/core/presentation/mixin.dart';
 import 'package:twitter_clone_2/theme/pallete.dart';
 
@@ -34,25 +36,44 @@ class DetailChatAppBar extends StatelessWidget with TimeFormat {
             IconButton(
               onPressed: () {
                 ref.read(isInChatProvider.notifier).state = false;
+                ref.read(chatIdProvider.notifier).state = null;
                 Navigator.of(context).pop();
               },
               icon: const Icon(Icons.arrow_back, color: Pallete.whiteColor),
               splashRadius: 20,
             ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              clipBehavior: Clip.antiAlias,
-              child: Image.network(
-                user.profilePic,
-                height: 50,
-                width: 50,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    const CircleAvatar(
-                  backgroundColor: Pallete.whiteColor,
-                  child: Icon(Icons.person),
-                ),
-              ),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    clipBehavior: Clip.antiAlias,
+                    child: Image.network(
+                      user.profilePic.isEmpty ? defaultAvatar : user.profilePic,
+                      height: 50,
+                      width: 50,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const CircleAvatar(
+                        backgroundColor: Pallete.whiteColor,
+                        child: Icon(Icons.person),
+                      ),
+                    )),
+                if (user.isTwitterBlue)
+                  Positioned(
+                      right: -10,
+                      bottom: -10,
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        child:
+                            Image.asset('assets/images/blue_account_icon.png'),
+                      )),
+              ],
             ),
             const SizedBox(width: 10),
             Column(
@@ -88,6 +109,8 @@ class DetailChatAppBar extends StatelessWidget with TimeFormat {
                   )
               ],
             ),
+            const Spacer(),
+            const ChatMenuPopup(),
           ],
         );
       },

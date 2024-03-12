@@ -24,6 +24,11 @@ final userDetail =
       .getUserDetailInfo(uid);
 });
 
+final userInfoOnlyProvider =
+    FutureProvider.family<User?, String>((ref, String uid) async {
+  return await ref.watch(userControllerProvider.notifier).getUserInfoOnly(uid);
+});
+
 final userUINotifierProvider =
     StateNotifierProvider<UserUINotifier, UserUIState>((ref) {
   return UserUINotifier(

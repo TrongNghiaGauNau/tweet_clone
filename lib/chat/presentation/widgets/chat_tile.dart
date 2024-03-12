@@ -16,10 +16,9 @@ class ChatTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final messageId = '${user.uid}_$currentUid';
     final stream = ref
         .watch(messageDetailNotifierProvider.notifier)
-        .getLastMessage(user.uid, messageId);
+        .getLastMessage(currentUid, user.uid);
     Message? message;
     return GestureDetector(
       onTap: () async {
@@ -72,12 +71,12 @@ class ChatTile extends ConsumerWidget {
                       ? const Text('Say hi to each other...')
                       : message!.senderId == currentUid
                           ? Text(
-                              'You: ${message!.message}',
+                              'You: ${message!.message.isEmpty && message!.imagesIdList.isNotEmpty ? 'Have sent an attachment' : message!.message}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             )
                           : Text(
-                              '${user.name}: ${message!.message}',
+                              '${user.name}: ${message!.message.isEmpty && message!.imagesIdList.isNotEmpty ? 'Have sent an attachment' : message!.message}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),

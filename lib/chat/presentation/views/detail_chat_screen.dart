@@ -7,6 +7,7 @@ import 'package:twitter_clone_2/chat/presentation/widgets/chat_bar.dart';
 import 'package:twitter_clone_2/chat/presentation/widgets/detail_chat_app_bar.dart';
 import 'package:twitter_clone_2/chat/presentation/widgets/message_card.dart';
 import 'package:twitter_clone_2/chat/shared/providers.dart';
+import 'package:twitter_clone_2/core/application/utils.dart';
 import 'package:twitter_clone_2/user_profile/infrastructure/models/user.dart';
 import 'package:twitter_clone_2/user_profile/shared/providers.dart';
 
@@ -20,19 +21,21 @@ class DetailChatScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<String> messList = [];
-    final messageId = '${currentUser.uid}_${user.uid}';
     final allMessage = ref
         .watch(messageDetailNotifierProvider.notifier)
-        .getAllMessages(currentUser.uid, messageId);
-
-    final textController = useTextEditingController();
+        .getAllMessages(currentUser.uid, user.uid);
     final activeUserInfo =
         ref.watch(userControllerProvider.notifier).getUserOnlineInfo(user.uid);
 
     final itemScrollController = useMemoized(() => ItemScrollController());
 
     useEffect(() {
-      Future(() => ref.read(isInChatProvider.notifier).state = true);
+      Future(() {
+        ref.read(chatIdProvider.notifier).state =
+            getUniqueIdFrom2String(currentUser.uid, user.uid);
+
+        ref.read(isInChatProvider.notifier).state = true;
+      });
       return null;
     }, []);
 
@@ -64,50 +67,52 @@ class DetailChatScreen extends HookConsumerWidget {
         body: Column(
           children: [
             Expanded(
-                child: StreamBuilder(
-              stream: allMessage,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                  case ConnectionState.none:
-                    return const Center(child: CircularProgressIndicator());
+              child: StreamBuilder(
+                stream: allMessage,
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                    case ConnectionState.none:
+                      return const Center(child: CircularProgressIndicator());
 
-                  case ConnectionState.active:
-                  case ConnectionState.done:
-                    final data = snapshot.data?.docs;
-                    final messagesList =
-                        data?.map((e) => Message.fromJson(e.data())).toList() ??
-                            [];
-                    messList = messagesList.reversed
-                        .map((message) => message.sentAt)
-                        .toList();
-                    if (messagesList.isEmpty) {
-                      return const Center(
-                          child: Text(
-                        'Say Hi...',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400, fontSize: 20),
-                      ));
-                    }
+                    case ConnectionState.active:
+                    case ConnectionState.done:
+                      final data = snapshot.data?.docs;
+                      final messagesList = data
+                              ?.map((e) => Message.fromJson(e.data()))
+                              .toList() ??
+                          [];
+                      messList = messagesList.reversed
+                          .map((message) => message.sentAt)
+                          .toList();
+                      if (messagesList.isEmpty) {
+                        return const Center(
+                            child: Text(
+                          'Say Hi...',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 20),
+                        ));
+                      }
 
-                    //to prevent bouncing
-                    final reverseMessageList = messagesList.reversed.toList();
+                      //to prevent bouncing
+                      final reverseMessageList = messagesList.reversed.toList();
 
-                    return ScrollablePositionedList.builder(
-                      physics: const ClampingScrollPhysics(),
-                      itemCount: messagesList.length,
-                      itemScrollController: itemScrollController,
-                      addAutomaticKeepAlives: true,
-                      reverse: true,
-                      itemBuilder: (context, index) {
-                        return MessageCard(message: reverseMessageList[index]);
-                      },
-                    );
-                }
-              },
-            )),
+                      return ScrollablePositionedList.builder(
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: messagesList.length,
+                        itemScrollController: itemScrollController,
+                        addAutomaticKeepAlives: true,
+                        reverse: true,
+                        itemBuilder: (context, index) {
+                          return MessageCard(
+                              message: reverseMessageList[index]);
+                        },
+                      );
+                  }
+                },
+              ),
+            ),
             ChatBar(
-              textEditingController: textController,
               ref: ref,
               receiverId: user.uid,
               senderId: currentUser.uid,

@@ -10,6 +10,7 @@ import 'package:twitter_clone_2/chat/presentation/widgets/bottom_sheet.dart';
 import 'package:twitter_clone_2/chat/presentation/widgets/reply_part.dart';
 import 'package:twitter_clone_2/chat/presentation/widgets/swipe_reply.dart';
 import 'package:twitter_clone_2/chat/shared/providers.dart';
+import 'package:twitter_clone_2/core/application/utils.dart';
 import 'package:twitter_clone_2/core/presentation/extension/context_extesion.dart';
 import 'package:twitter_clone_2/core/presentation/mixin.dart';
 import 'package:twitter_clone_2/core/shared/providers.dart';
@@ -191,8 +192,12 @@ class OtherMessage extends HookConsumerWidget with TimeFormat {
     final showSentTime = useState(false);
     useEffect(() {
       if (isInChat && message.seen == false) {
+        final chatId =
+            getUniqueIdFrom2String(message.senderId, message.receiverId);
         ref.read(messageDetailNotifierProvider.notifier).updateMessage(
-            myId: currentUID, otherId: message.senderId, message: message);
+              chatId: chatId,
+              messageId: message.id,
+            );
       }
       return null;
     }, []);

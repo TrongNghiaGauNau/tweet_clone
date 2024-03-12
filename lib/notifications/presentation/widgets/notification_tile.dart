@@ -6,7 +6,6 @@ import 'package:twitter_clone_2/notifications/presentation/widgets/loading_notif
 import 'package:twitter_clone_2/notifications/shared/providers.dart';
 import 'package:twitter_clone_2/theme/pallete.dart';
 import 'package:twitter_clone_2/tweet/presentation/views/tweet_detail.dart';
-import 'package:twitter_clone_2/tweet/shared/providers.dart';
 
 class NotificationTile extends HookConsumerWidget {
   const NotificationTile({super.key, required this.notification});
@@ -17,22 +16,6 @@ class NotificationTile extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     useAutomaticKeepAlive();
     final sender = ref.watch(userUIDetail(notification.senderID));
-    final tweet = ref.watch(singleTweetControllerProvider(notification.postId));
-
-    // useEffect(() {
-    //   Future(() => ref
-    //       .read(singleInAppNotificationProvider.notifier)
-    //       .getUserUIlInfo(notification.senderID));
-    // }, const []);
-
-    // return sender.when(
-    //   init: () => const SizedBox.shrink(),
-    //   data: (userUI) {
-
-    //   },
-    //   error: () => errorNoti(),
-    //   loading: () => const LoadingNotiTile(),
-    // );
 
     return sender.when(
       data: (userUI) {
@@ -41,7 +24,7 @@ class NotificationTile extends HookConsumerWidget {
         }
         return GestureDetector(
           onTap: () {
-            if (tweet == null) return;
+            if (notification.postId.isEmpty) return;
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) =>
                   TwitterDetailScreen(tweetId: notification.postId),

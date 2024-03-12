@@ -11,13 +11,13 @@ class ChatRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final _userRepo = FirebaseFirestore.instance.collection('users');
 
-  Stream<QuerySnapshot<Map<String, dynamic>>>? getAllMessages(
-      String userId, String messageId) {
+  Stream<QuerySnapshot<Map<String, dynamic>>>? getAllMessages(String chatId) {
     try {
+      //chat -> chatId -> take all here
       final ref = _chatRepo
           .collection('chat')
-          .doc(userId)
-          .collection(messageId)
+          .doc(chatId)
+          .collection(chatId)
           .orderBy('sentAt')
           .snapshots();
 
@@ -32,32 +32,27 @@ class ChatRepository {
   }
 
   Either<Failure, void> sendMessage(
-      {required Message myMessage, required Message otherMessage}) {
+      {required Message message, required String chatId}) {
     try {
-      final senderMsg = _chatRepo
+      //chat -> chatId -> sentAt(messageId)
+      final toSendMsg = _chatRepo
           .collection('chat')
-          .doc(myMessage.senderId)
-          .collection(myMessage.id);
-      final receiverMsg = _chatRepo
-          .collection('chat')
-          .doc(otherMessage.receiverId)
-          .collection(otherMessage.id);
+          .doc(chatId)
+          .collection(chatId)
+          .doc(message.id);
 
-      senderMsg.doc(myMessage.sentAt).set(myMessage.toJson());
-      receiverMsg.doc(otherMessage.sentAt).set(otherMessage.toJson());
-      //reset timeline on my new chat
+      toSendMsg.set(message.toJson());
       _chatRepo
           .collection('chat_list')
-          .doc(myMessage.senderId)
+          .doc(message.senderId)
           .collection('my_chat_list')
-          .doc(myMessage.receiverId)
+          .doc(message.receiverId)
           .set({'new_chat': DateTime.now().toIso8601String()});
-      //reset timeline on the one i chat to  new chat
       _chatRepo
           .collection('chat_list')
-          .doc(myMessage.receiverId)
+          .doc(message.receiverId)
           .collection('my_chat_list')
-          .doc(myMessage.senderId)
+          .doc(message.senderId)
           .set({'new_chat': DateTime.now().toIso8601String()});
 
       return right(null);
@@ -70,13 +65,12 @@ class ChatRepository {
     }
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>>? getLastMessage(
-      String userId, String messageId) {
+  Stream<QuerySnapshot<Map<String, dynamic>>>? getLastMessage(String chatId) {
     try {
       final ref = _chatRepo
           .collection('chat')
-          .doc(userId)
-          .collection(messageId)
+          .doc(chatId)
+          .collection(chatId)
           .orderBy('sentAt', descending: true)
           .limit(1)
           .snapshots();
@@ -146,25 +140,15 @@ class ChatRepository {
   }
 
   FutureVoid setSeenMessage({
-    required String myId,
-    required String otherId,
-    required Message message,
+    required String chatId,
+    required String messageId,
   }) async {
-    final myChatId = '${myId}_$otherId';
-    final otherChatId = '${otherId}_$myId';
     //update message in my chat
     await _chatRepo
         .collection('chat')
-        .doc(myId)
-        .collection(myChatId)
-        .doc(message.sentAt)
-        .update({'seen': true});
-    //update message in other chat
-    await _chatRepo
-        .collection('chat')
-        .doc(otherId)
-        .collection(otherChatId)
-        .doc(message.sentAt)
+        .doc(chatId)
+        .collection(chatId)
+        .doc(messageId)
         .update({'seen': true});
   }
 
@@ -193,5 +177,42 @@ class ChatRepository {
     } catch (e) {
       debugPrint('delete error: $e');
     }
+  }
+
+  void uploadChatImages({
+    required String chatId,
+    required List<dynamic> imagesList,
+  }) {
+    try {
+      _chatRepo
+          .collection('chat')
+          .doc(chatId)
+          .collection('chat_images')
+          .doc('chat_images')
+          .set({'images_list': imagesList});
+    } catch (e) {
+      debugPrint('chat_repo_error: $e');
+    }
+  }
+
+  Future<List<dynamic>?> getChatImages(String chatId) async {
+    try {
+      final doc = await _chatRepo
+          .collection('chat')
+          .doc(chatId)
+          .collection('chat_images')
+          .doc('chat_images')
+          .get();
+      final data = doc.data();
+      if (data != null) {
+        final List<dynamic> imagesList = [];
+        imagesList.addAll(data['images_list']);
+        return imagesList;
+      }
+    } catch (error) {
+      debugPrint('chat_error get chat images: $error');
+      return null;
+    }
+    return [];
   }
 }

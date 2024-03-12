@@ -1,145 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:twitter_clone_2/core/presentation/extension/context_extesion.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:twitter_clone_2/attachments/shared/providers.dart';
 
-class TestScreen extends StatefulWidget {
+const chatId = 'jxdupRbPtSZ6Y1HczNrgB1Yqe3q1_lftT6BADM8QUGP0b6xx5q4GwtNi1';
+
+class TestScreen extends HookConsumerWidget {
   const TestScreen({super.key});
 
   @override
-  TestScreenState createState() => TestScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final chatImageList = ref.watch(chatImagesNotiferProvider);
 
-class TestScreenState extends State<TestScreen> {
-  late TextEditingController paymentController;
-  late GlobalKey<FormState> paymentForm;
-  Map<String, dynamic>? paymentIntentData;
+    useEffect(() {
+      Future(() =>
+          ref.read(chatImagesNotiferProvider.notifier).getChatImages(chatId));
+      return null;
+    }, []);
 
-  @override
-  void initState() {
-    super.initState();
-    paymentController = TextEditingController();
-    paymentForm = GlobalKey<FormState>();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Stripe Payment Example'),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-      ),
-      body: Product(),
-    );
-  }
-}
-
-class Product extends StatefulWidget {
-  @override
-  _ProductState createState() => _ProductState();
-}
-
-class _ProductState extends State<Product> with SingleTickerProviderStateMixin {
-  late TabController tabController;
-  int selectedIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    tabController = TabController(length: 3, vsync: this, initialIndex: 0);
-  }
-
-  @override
-  void dispose() {
-    tabController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final itemSize =
-        context.calculateItemSize(numberOfItems: 3, padding: 0, spacing: 6);
-    return DefaultTabController(
-      length: 3,
-      initialIndex: 0,
-      child: Scaffold(
-        body: ListView(
-          shrinkWrap: true,
-          children: [
-            TabBar(
-              tabs: const <Widget>[
-                Tab(
-                  text: 'one',
-                ),
-                Tab(
-                  text: 'two',
-                ),
-                Tab(
-                  text: 'three',
-                ),
-              ],
-              controller: tabController,
-              onTap: (index) {
-                setState(() {
-                  selectedIndex = index;
-                  tabController.animateTo(index);
-                });
-              },
+      appBar: AppBar(),
+      body: chatImageList.when(
+        init: () => const Center(child: Text('Images list is empty')),
+        error: () =>
+            const Center(child: Text('Can not show images due to some error')),
+        empty: () =>
+            const Center(child: Text('There is no images have been sent yet')),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        data: (imagesList) {
+          // for (final image in imagesList) {
+          //   debugPrint('$image \n');
+          // }
+          return GridView.builder(
+            itemCount: imagesList.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 5,
+              crossAxisSpacing: 5,
             ),
-            IndexedStack(
-              index: selectedIndex,
-              children: <Widget>[
-                kaka(itemSize: itemSize),
-                Visibility(
-                  child: Text('test2'),
-                  maintainState: true,
-                  visible: selectedIndex == 1,
-                ),
-                Visibility(
-                  child: Text('test3'),
-                  maintainState: true,
-                  visible: selectedIndex == 2,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class kaka extends HookWidget {
-  const kaka({super.key, required this.itemSize});
-
-  final double itemSize;
-
-  @override
-  Widget build(BuildContext context) {
-    final List<int> a = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    return Column(
-      children: [
-        Wrap(
-          alignment: WrapAlignment.start,
-          spacing: 6.0,
-          runSpacing: 6.0,
-          children: a.map((number) {
-            return GestureDetector(
-              child: Container(
-                width: itemSize,
-                height: itemSize,
+            itemBuilder: (context, index) {
+              return Container(
+                clipBehavior: Clip.hardEdge,
                 decoration:
-                    BoxDecoration(color: Colors.red, border: Border.all()),
-              ),
-            );
-          }).toList(),
-        ),
-        Text('kkakakak'),
-        Text('kkakakak'),
-        Text('kkakakak'),
-        Text('kkakakak'),
-        Text('kkakakak'),
-      ],
+                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                child: Image.network(
+                  imagesList[index],
+                  fit: BoxFit.cover,
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

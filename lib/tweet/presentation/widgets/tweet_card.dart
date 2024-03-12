@@ -20,6 +20,7 @@ import 'package:twitter_clone_2/tweet/presentation/widgets/tweet_icons_button.da
 import 'package:twitter_clone_2/tweet/presentation/widgets/tweet_menu_popup.dart';
 import 'package:twitter_clone_2/tweet/shared/providers.dart';
 import 'package:twitter_clone_2/user_profile/presentation/views/profile_screen.dart';
+import 'package:twitter_clone_2/user_profile/shared/providers.dart';
 
 class TweetCard extends HookConsumerWidget {
   const TweetCard({super.key, required this.tweetData});
@@ -30,6 +31,9 @@ class TweetCard extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     useAutomaticKeepAlive();
     final tweet = ref.watch(singleTweetControllerProvider(tweetData.id));
+    final tweetOwner = ref
+        .watch(userInfoOnlyProvider(tweet?.tweetCreator['creator_uid'] ?? ''))
+        .value;
     final currentUser = ref.watch(firebaseAuthProvider).currentUser;
     return currentUser == null || tweet == null
         ? const LoadingSingleTweet()
@@ -38,26 +42,41 @@ class TweetCard extends HookConsumerWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    margin: const EdgeInsets.all(10).copyWith(top: 1),
-                    child: GestureDetector(
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ProfileScreen(
-                            uid: tweet.tweetCreator['creator_uid'] ?? ''),
-                      )),
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            (tweet.tweetCreator[TweetCreator.creatorAvatar] ==
-                                        null ||
-                                    tweet.tweetCreator[
-                                            TweetCreator.creatorAvatar] ==
-                                        '')
+                  Stack(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(10).copyWith(top: 1),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ProfileScreen(
+                                  uid: tweet.tweetCreator['creator_uid'] ?? ''),
+                            ));
+                          },
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage((tweetOwner == null ||
+                                    tweetOwner.profilePic == '')
                                 ? defaultAvatar
-                                : tweet
-                                    .tweetCreator[TweetCreator.creatorAvatar]!),
-                        radius: 30,
+                                : tweetOwner.profilePic),
+                            radius: 30,
+                          ),
+                        ),
                       ),
-                    ),
+                      if (tweetOwner != null && tweetOwner.isTwitterBlue)
+                        Positioned(
+                            bottom: 5,
+                            right: 5,
+                            child: Container(
+                              height: 30,
+                              width: 30,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                              ),
+                              child: Image.asset(
+                                  'assets/images/blue_account_icon.png'),
+                            )),
+                    ],
                   ),
                   Expanded(
                     child: Column(

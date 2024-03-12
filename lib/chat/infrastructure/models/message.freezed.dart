@@ -26,7 +26,7 @@ mixin _$Message {
   String get message => throw _privateConstructorUsedError;
   String get sentAt => throw _privateConstructorUsedError;
   List<String> get imagesIdList => throw _privateConstructorUsedError;
-  bool get seen => throw _privateConstructorUsedError; // Message? replyMessage,
+  bool get seen => throw _privateConstructorUsedError;
   Map<String, dynamic>? get replyMessage => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -224,9 +224,7 @@ class _$MessageImpl implements _Message {
   @override
   @JsonKey()
   final bool seen;
-// Message? replyMessage,
   final Map<String, dynamic>? _replyMessage;
-// Message? replyMessage,
   @override
   Map<String, dynamic>? get replyMessage {
     final value = _replyMessage;
@@ -314,7 +312,7 @@ abstract class _Message implements Message {
   List<String> get imagesIdList;
   @override
   bool get seen;
-  @override // Message? replyMessage,
+  @override
   Map<String, dynamic>? get replyMessage;
   @override
   @JsonKey(ignore: true)

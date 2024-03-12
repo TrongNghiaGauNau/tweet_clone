@@ -304,12 +304,13 @@ class ImageTweets extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final a = tweetsWithImages.first;
-    final List<Tweet> b = [];
-    for (int i = 1; i < 20; i++) {
-      b.add(a);
-    }
     useAutomaticKeepAlive();
+    if (tweetsWithImages.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.only(top: 50),
+        child: Center(child: Text('There is no image tweet to show')),
+      );
+    }
     return Wrap(
       alignment: WrapAlignment.start,
       spacing: 6.0,
