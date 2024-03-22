@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone_2/attachments/application/chat_images_notifier.dart';
+import 'package:twitter_clone_2/attachments/infratruscture/model/attachment/attachment.dart';
 import 'package:twitter_clone_2/chat/infrastructure/chat_repository.dart';
 import 'package:twitter_clone_2/chat/infrastructure/models/chat_list_state/chat_list_state.dart';
 import 'package:twitter_clone_2/chat/infrastructure/models/message.dart';
@@ -41,7 +42,7 @@ class ChatNotifier extends StateNotifier<ChatListState> {
     final now = DateTime.now().toIso8601String();
     List<String> imagesIdList = [];
     if (imagesList.isNotEmpty) {
-      imagesIdList = await uploadChatImages(chatId, imagesList);
+      imagesIdList = await uploadChatImages(chatId, imagesList, senderId, now);
     }
     final message = Message(
       id: now,
@@ -142,7 +143,7 @@ class ChatNotifier extends StateNotifier<ChatListState> {
   }
 
   Future<List<String>> uploadChatImages(
-      String chatId, List<File> images) async {
+      String chatId, List<File> images, String uid, String sentAt) async {
     List<String> imageUrls = [];
     List<UploadTask> tasks = [];
 
@@ -167,13 +168,21 @@ class ChatNotifier extends StateNotifier<ChatListState> {
         imageUrls.add(await snapshot.ref.getDownloadURL());
       }
       //xu ly truong hop list hinh moi ko de len list hinh cu
-      final originalImagesList =
-          await _chatImagesNotifier.getChatImages(chatId);
-      if (originalImagesList != null) {
-        final updateImagesList = originalImagesList;
-        updateImagesList.addAll(imageUrls);
+      // final originalImagesList =
+      //     await _chatImagesNotifier.getChatImages(chatId);
+      // if (originalImagesList != null) {
+      //   final updateImagesList = originalImagesList;
+      //   updateImagesList.addAll(imageUrls);
+      //   _chatRepository.uploadChatImages(
+      //       chatId: chatId, imagesList: updateImagesList);
+      // }
+
+      for (final urlImage in imageUrls) {
+        final id = const Uuid().v4();
+        final attachment =
+            Attachment(id: id, url: urlImage, uid: uid, sentAt: sentAt);
         _chatRepository.uploadChatImages(
-            chatId: chatId, imagesList: updateImagesList);
+            chatId: chatId, attachment: attachment);
       }
     } catch (e) {
       debugPrint("Error uploading images: $e");

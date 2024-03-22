@@ -38,7 +38,7 @@ mixin _$ChatImagesState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() init,
-    required TResult Function(List<String> imagesList) data,
+    required TResult Function(List<Attachment> imagesList) data,
     required TResult Function() error,
     required TResult Function() empty,
     required TResult Function() loading,
@@ -47,7 +47,7 @@ mixin _$ChatImagesState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? init,
-    TResult? Function(List<String> imagesList)? data,
+    TResult? Function(List<Attachment> imagesList)? data,
     TResult? Function()? error,
     TResult? Function()? empty,
     TResult? Function()? loading,
@@ -56,7 +56,7 @@ mixin _$ChatImagesState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? init,
-    TResult Function(List<String> imagesList)? data,
+    TResult Function(List<Attachment> imagesList)? data,
     TResult Function()? error,
     TResult Function()? empty,
     TResult Function()? loading,
@@ -160,7 +160,7 @@ class _$ChatImagesInitImpl extends _ChatImagesInit {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() init,
-    required TResult Function(List<String> imagesList) data,
+    required TResult Function(List<Attachment> imagesList) data,
     required TResult Function() error,
     required TResult Function() empty,
     required TResult Function() loading,
@@ -172,7 +172,7 @@ class _$ChatImagesInitImpl extends _ChatImagesInit {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? init,
-    TResult? Function(List<String> imagesList)? data,
+    TResult? Function(List<Attachment> imagesList)? data,
     TResult? Function()? error,
     TResult? Function()? empty,
     TResult? Function()? loading,
@@ -184,7 +184,7 @@ class _$ChatImagesInitImpl extends _ChatImagesInit {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? init,
-    TResult Function(List<String> imagesList)? data,
+    TResult Function(List<Attachment> imagesList)? data,
     TResult Function()? error,
     TResult Function()? empty,
     TResult Function()? loading,
@@ -258,7 +258,7 @@ abstract class _$$ChatImagesDataImplCopyWith<$Res> {
           $Res Function(_$ChatImagesDataImpl) then) =
       __$$ChatImagesDataImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<String> imagesList});
+  $Res call({List<Attachment> imagesList});
 }
 
 /// @nodoc
@@ -278,7 +278,7 @@ class __$$ChatImagesDataImplCopyWithImpl<$Res>
       imagesList: null == imagesList
           ? _value._imagesList
           : imagesList // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<Attachment>,
     ));
   }
 }
@@ -287,7 +287,7 @@ class __$$ChatImagesDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ChatImagesDataImpl extends _ChatImagesData {
   const _$ChatImagesDataImpl(
-      {required final List<String> imagesList, final String? $type})
+      {required final List<Attachment> imagesList, final String? $type})
       : _imagesList = imagesList,
         $type = $type ?? 'data',
         super._();
@@ -295,9 +295,9 @@ class _$ChatImagesDataImpl extends _ChatImagesData {
   factory _$ChatImagesDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatImagesDataImplFromJson(json);
 
-  final List<String> _imagesList;
+  final List<Attachment> _imagesList;
   @override
-  List<String> get imagesList {
+  List<Attachment> get imagesList {
     if (_imagesList is EqualUnmodifiableListView) return _imagesList;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_imagesList);
@@ -336,7 +336,7 @@ class _$ChatImagesDataImpl extends _ChatImagesData {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() init,
-    required TResult Function(List<String> imagesList) data,
+    required TResult Function(List<Attachment> imagesList) data,
     required TResult Function() error,
     required TResult Function() empty,
     required TResult Function() loading,
@@ -348,7 +348,7 @@ class _$ChatImagesDataImpl extends _ChatImagesData {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? init,
-    TResult? Function(List<String> imagesList)? data,
+    TResult? Function(List<Attachment> imagesList)? data,
     TResult? Function()? error,
     TResult? Function()? empty,
     TResult? Function()? loading,
@@ -360,7 +360,7 @@ class _$ChatImagesDataImpl extends _ChatImagesData {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? init,
-    TResult Function(List<String> imagesList)? data,
+    TResult Function(List<Attachment> imagesList)? data,
     TResult Function()? error,
     TResult Function()? empty,
     TResult Function()? loading,
@@ -421,14 +421,14 @@ class _$ChatImagesDataImpl extends _ChatImagesData {
 }
 
 abstract class _ChatImagesData extends ChatImagesState {
-  const factory _ChatImagesData({required final List<String> imagesList}) =
+  const factory _ChatImagesData({required final List<Attachment> imagesList}) =
       _$ChatImagesDataImpl;
   const _ChatImagesData._() : super._();
 
   factory _ChatImagesData.fromJson(Map<String, dynamic> json) =
       _$ChatImagesDataImpl.fromJson;
 
-  List<String> get imagesList;
+  List<Attachment> get imagesList;
   @JsonKey(ignore: true)
   _$$ChatImagesDataImplCopyWith<_$ChatImagesDataImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -482,7 +482,7 @@ class _$ChatImagesErrorImpl extends _ChatImagesError {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() init,
-    required TResult Function(List<String> imagesList) data,
+    required TResult Function(List<Attachment> imagesList) data,
     required TResult Function() error,
     required TResult Function() empty,
     required TResult Function() loading,
@@ -494,7 +494,7 @@ class _$ChatImagesErrorImpl extends _ChatImagesError {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? init,
-    TResult? Function(List<String> imagesList)? data,
+    TResult? Function(List<Attachment> imagesList)? data,
     TResult? Function()? error,
     TResult? Function()? empty,
     TResult? Function()? loading,
@@ -506,7 +506,7 @@ class _$ChatImagesErrorImpl extends _ChatImagesError {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? init,
-    TResult Function(List<String> imagesList)? data,
+    TResult Function(List<Attachment> imagesList)? data,
     TResult Function()? error,
     TResult Function()? empty,
     TResult Function()? loading,
@@ -622,7 +622,7 @@ class _$ChatImagesEmptyImpl extends _ChatImagesEmpty {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() init,
-    required TResult Function(List<String> imagesList) data,
+    required TResult Function(List<Attachment> imagesList) data,
     required TResult Function() error,
     required TResult Function() empty,
     required TResult Function() loading,
@@ -634,7 +634,7 @@ class _$ChatImagesEmptyImpl extends _ChatImagesEmpty {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? init,
-    TResult? Function(List<String> imagesList)? data,
+    TResult? Function(List<Attachment> imagesList)? data,
     TResult? Function()? error,
     TResult? Function()? empty,
     TResult? Function()? loading,
@@ -646,7 +646,7 @@ class _$ChatImagesEmptyImpl extends _ChatImagesEmpty {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? init,
-    TResult Function(List<String> imagesList)? data,
+    TResult Function(List<Attachment> imagesList)? data,
     TResult Function()? error,
     TResult Function()? empty,
     TResult Function()? loading,
@@ -762,7 +762,7 @@ class _$ChatImagesLoadingImpl extends _ChatImagesLoading {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() init,
-    required TResult Function(List<String> imagesList) data,
+    required TResult Function(List<Attachment> imagesList) data,
     required TResult Function() error,
     required TResult Function() empty,
     required TResult Function() loading,
@@ -774,7 +774,7 @@ class _$ChatImagesLoadingImpl extends _ChatImagesLoading {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? init,
-    TResult? Function(List<String> imagesList)? data,
+    TResult? Function(List<Attachment> imagesList)? data,
     TResult? Function()? error,
     TResult? Function()? empty,
     TResult? Function()? loading,
@@ -786,7 +786,7 @@ class _$ChatImagesLoadingImpl extends _ChatImagesLoading {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? init,
-    TResult Function(List<String> imagesList)? data,
+    TResult Function(List<Attachment> imagesList)? data,
     TResult Function()? error,
     TResult Function()? empty,
     TResult Function()? loading,

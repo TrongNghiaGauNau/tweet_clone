@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:twitter_clone_2/attachments/presentation/chat_list_files_view.dart';
 import 'package:twitter_clone_2/attachments/shared/providers.dart';
 
-class ChatListFilesScreen extends HookConsumerWidget {
-  const ChatListFilesScreen({super.key, required this.chatId});
+class GridChatListFilesScreen extends HookConsumerWidget {
+  const GridChatListFilesScreen({super.key, required this.chatId});
 
   final String chatId;
   @override
@@ -34,42 +35,26 @@ class ChatListFilesScreen extends HookConsumerWidget {
             crossAxisSpacing: 5,
           ),
           itemBuilder: (context, index) {
-            return Container(
-              clipBehavior: Clip.hardEdge,
-              decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(10)),
-              child: Image.network(
-                imagesList[index],
-                fit: BoxFit.cover,
+            return GestureDetector(
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ChatListFilesView(
+                  initialIndex: index,
+                  imagesList: imagesList,
+                ),
+              )),
+              child: Container(
+                clipBehavior: Clip.hardEdge,
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                child: Image.network(
+                  imagesList[index].url,
+                  fit: BoxFit.cover,
+                ),
               ),
             );
           },
         ),
       ),
-      // body: chatImageList == null
-      //     ? const Center(child: Text('Can not show images due to some error'))
-      //     : chatImageList.isEmpty
-      //         ? const Center(
-      //             child: Text('There is no images have been sent yet'))
-      //         : GridView.builder(
-      //             itemCount: chatImageList.length,
-      //             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      //               crossAxisCount: 3,
-      //               mainAxisSpacing: 5,
-      //               crossAxisSpacing: 5,
-      //             ),
-      //             itemBuilder: (context, index) {
-      //               return Container(
-      //                 clipBehavior: Clip.hardEdge,
-      //                 decoration: BoxDecoration(
-      //                     borderRadius: BorderRadius.circular(10)),
-      //                 child: Image.network(
-      //                   chatImageList[index],
-      //                   fit: BoxFit.cover,
-      //                 ),
-      //               );
-      //             },
-      //           ),
     );
   }
 }

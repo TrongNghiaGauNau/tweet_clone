@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:twitter_clone_2/attachments/infratruscture/model/attachment/attachment.dart';
 import 'package:twitter_clone_2/chat/infrastructure/models/message.dart';
 import 'package:twitter_clone_2/core/domain/failure.dart';
 import 'package:twitter_clone_2/core/domain/type_defs.dart';
@@ -181,38 +182,45 @@ class ChatRepository {
 
   void uploadChatImages({
     required String chatId,
-    required List<dynamic> imagesList,
+    required Attachment attachment,
   }) {
     try {
+      // _chatRepo
+      //     .collection('chat')
+      //     .doc(chatId)
+      //     .collection('chat_images')
+      //     .doc('chat_images')
+      //     .set({'images_list': imagesList});
       _chatRepo
           .collection('chat')
           .doc(chatId)
           .collection('chat_images')
-          .doc('chat_images')
-          .set({'images_list': imagesList});
+          .doc(attachment.id)
+          .set(attachment.toJson());
     } catch (e) {
-      debugPrint('chat_repo_error: $e');
+      debugPrint('upload_chat_images_error: $e');
     }
   }
 
-  Future<List<dynamic>?> getChatImages(String chatId) async {
+  Future<List<Attachment>?> getChatImages(String chatId) async {
     try {
       final doc = await _chatRepo
           .collection('chat')
           .doc(chatId)
           .collection('chat_images')
-          .doc('chat_images')
           .get();
-      final data = doc.data();
-      if (data != null) {
-        final List<dynamic> imagesList = [];
-        imagesList.addAll(data['images_list']);
-        return imagesList;
-      }
+      final data = doc.docs;
+
+      // final List<dynamic> imagesList = [];
+      // imagesList.addAll(data['images_list']);
+
+      final imagesList =
+          data.map((e) => Attachment.fromJson(e.data())).toList();
+
+      return imagesList;
     } catch (error) {
       debugPrint('chat_error get chat images: $error');
       return null;
     }
-    return [];
   }
 }

@@ -29,12 +29,19 @@ class DetailChatScreen extends HookConsumerWidget {
 
     final itemScrollController = useMemoized(() => ItemScrollController());
 
+    //watch chatMember here so i will not dispose only if get out of chat screen
+    final chatMember = ref.watch(chatMemeberProvider);
+
     useEffect(() {
       Future(() {
         ref.read(chatIdProvider.notifier).state =
             getUniqueIdFrom2String(currentUser.uid, user.uid);
 
         ref.read(isInChatProvider.notifier).state = true;
+
+        Future(() => ref
+            .read(chatMemeberProvider.notifier)
+            .getChatMembers([currentUser.uid, user.uid]));
       });
       return null;
     }, []);

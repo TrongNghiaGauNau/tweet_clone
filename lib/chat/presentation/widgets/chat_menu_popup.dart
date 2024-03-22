@@ -37,7 +37,7 @@ class ChatMenuPopup extends ConsumerWidget {
             case ChatMenuPopupAction.files:
               if (chatId != null) {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ChatListFilesScreen(chatId: chatId),
+                  builder: (context) => GridChatListFilesScreen(chatId: chatId),
                 ));
               }
               break;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:twitter_clone_2/attachments/infratruscture/model/attachment/attachment.dart';
 import 'package:twitter_clone_2/chat/infrastructure/chat_repository.dart';
 import 'package:twitter_clone_2/chat/infrastructure/models/chat_image_list/chat_images_state.dart';
 
@@ -10,7 +11,7 @@ class ChatImagesNotifier extends StateNotifier<ChatImagesState> {
 
   final ChatRepository _chatRepository;
 
-  Future<List<String>?> getChatImages(String chatId) async {
+  Future<List<Attachment>?> getChatImages(String chatId) async {
     state = const ChatImagesState.loading();
     try {
       final imageList = await _chatRepository.getChatImages(chatId);
@@ -19,9 +20,8 @@ class ChatImagesNotifier extends StateNotifier<ChatImagesState> {
           state = const ChatImagesState.empty();
           return [];
         } else {
-          final imageListConvert = imageList.map((e) => e.toString()).toList();
-          state = ChatImagesState.data(imagesList: imageListConvert);
-          return imageListConvert;
+          state = ChatImagesState.data(imagesList: imageList);
+          return imageList;
         }
       } else {
         state = const ChatImagesState.error();

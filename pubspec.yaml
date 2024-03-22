@@ -38,6 +38,7 @@ dependencies:
   firebase_messaging: ^14.7.10
   scrollable_positioned_list: ^0.3.8
   flutter_stripe: ^9.5.0+1
+  flutter_mentions: ^2.0.1
 
 dev_dependencies:
   flutter_test:

@@ -66,6 +66,7 @@ class UpgradeAccountView extends HookConsumerWidget {
         error: () => const ErrorText(error: 'Can not load user data'),
         loading: () => const Center(child: CircularProgressIndicator()),
         data: (userUI) {
+          debugPrint('kakaka: $userUI');
           return SizedBox(
             width: double.infinity,
             child: Column(
@@ -110,7 +111,7 @@ class UpgradeAccountView extends HookConsumerWidget {
                     '*You are already upgraded your account',
                     style: TextStyle(fontSize: 18),
                   )),
-                if (userUI.isTwitterBlue == false)
+                if (!userUI.isTwitterBlue)
                   GestureDetector(
                     onTap: () async {
                       final res =

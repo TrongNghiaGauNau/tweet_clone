@@ -20,7 +20,7 @@ Map<String, dynamic> _$$ChatImagesInitImplToJson(
 _$ChatImagesDataImpl _$$ChatImagesDataImplFromJson(Map<String, dynamic> json) =>
     _$ChatImagesDataImpl(
       imagesList: (json['imagesList'] as List<dynamic>)
-          .map((e) => e as String)
+          .map((e) => Attachment.fromJson(e as Map<String, dynamic>))
           .toList(),
       $type: json['runtimeType'] as String?,
     );

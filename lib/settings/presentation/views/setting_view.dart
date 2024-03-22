@@ -47,8 +47,8 @@ class SettingView extends ConsumerWidget {
             settingTile(
               icon: const Icon(Icons.error),
               text: 'Maintainace',
-              onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const TestScreen())),
+              onTap: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => TestScreen())),
             ),
           ],
         ),
